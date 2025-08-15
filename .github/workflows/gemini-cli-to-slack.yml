@@ -8,9 +8,10 @@ on:
         type: string
         description: String passed to the Gemini CLI's `--prompt` argument
       slack-channel-id:
-        required: true
+        required: false
         type: string
         description: Slack channel ID
+        default: null
       gemini-cli-settings:
         required: false
         type: string
@@ -38,9 +39,10 @@ on:
         type: string
         description: String passed to the Gemini CLI's `--prompt` argument
       slack-channel-id:
-        required: true
+        required: false
         type: string
         description: Slack channel ID
+        default: null
       gemini-cli-settings:
         required: false
         type: string
@@ -75,8 +77,6 @@ defaults:
 jobs:
   gemini-to-slack:
     runs-on: ubuntu-latest
-    env:
-      OUTPUT_MD_FILE: gemini_output.md
     steps:
       - name: Run Gemini CLI
         id: gemini-cli
@@ -125,7 +125,7 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_API_TOKEN }}
           payload: |
-            channel: ${{ inputs.slack-channel-id }}
+            channel: ${{ inputs.slack-channel-id || env.SLACK_CHANNEL_ID }}
             attachments:  # https://api.slack.com/reference/messaging/attachments
               - fallback: ${{ steps.result-normalization.outputs.summary_plain }}
                 mrkdwn_in:

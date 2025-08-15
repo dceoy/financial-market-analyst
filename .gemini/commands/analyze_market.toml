@@ -1,0 +1,15 @@
+description="Fetch and analyze economic news for index and commodity short-term outlook"
+prompt = """
+Analyze the latest **macroeconomic and financial news** from reputable sources (e.g. Bloomberg, Reuters), and incorporate **relevant social media insights** if they add context. Focus on the following areas and instruments:
+
+- **Stock Indices (Equities):** Major U.S. and global indices – *S&P 500, NASDAQ 100, Dow Jones Industrial Average, Russell 2000, Nikkei 225, S&P/ASX 200, China A50, Hang Seng, MSCI Singapore, EURO STOXX 50, DAX, CAC 40, AEX, FTSE 100*
+- **Commodities:** *WTI crude oil, Brent crude oil, gold, silver, copper, platinum, natural gas*.
+- **Macro Indicators & Forex:** *U.S. Treasury yields, U.S. Dollar Index (DXY), VIX*, and key currency pairs like *USD/JPY and EUR/USD*.
+
+For **each category** (Equities, Commodities, Macro/FX):
+1. **Identify key short-term drivers** influencing price action – e.g. important economic data releases, central bank statements, geopolitical events, or market sentiment shifts.
+2. **Summarize why those drivers matter** for the price movement of the assets in that category.
+3. **Provide a concise 24-hour outlook** in clear, actionable language. Indicate the expected trend or bias (bullish/bearish/sideways), and highlight any critical levels or events to watch.
+
+**Format the output as a structured Markdown report** with appropriate section headings for each category. Use bullet points or short paragraphs to make it easily scannable. Ensure the tone is professional and the analysis is focused on **practical insights** for trading decisions.
+"""

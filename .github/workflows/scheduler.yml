@@ -1,18 +1,26 @@
 ---
-name: CI/CD
+name: Scheduled jobs
 on:
   schedule:
     - cron: '0 */8 * * *'
   workflow_dispatch:
+    inputs:
+      gemini-cli-prompt:
+        required: false
+        type: string
+        description: String passed to the Gemini CLI's `--prompt` argument
+        default: /analyze_market
+      title:
+        required: false
+        type: string
+        description: Title for the Slack message
+        default: null
 jobs:
   gemini-cli-to-slack:
-    uses: ./.github/workflows/github-actions-lint.yml
+    uses: ./.github/workflows/gemini-cli-to-slack.yml
     with:
-      gemini-cli-prompt: 'What is the meaning of life?'
-      slack-channel-id: ${{ env.SLACK_CHANNEL_ID }}
-      gemini-cli-version: latest
-      title: 'Gemini CLI Result :milky_way:'
-      fail-on-error: true
+      gemini-cli-prompt: ${{ inputs.gemini-cli-prompt || '/analyze_market' }}
+      title: ${{ inputs.title || 'Gemini CLI Result :milky_way:' }}
     secrets:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}

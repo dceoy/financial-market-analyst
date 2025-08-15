@@ -55,10 +55,8 @@ jobs:
     if: >
       github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
     needs:
-      - go-lint-and-scan
       - github-actions-lint
       - toml-lint
-      - docker-lint-and-scan
     permissions:
       contents: write
       pull-requests: write
