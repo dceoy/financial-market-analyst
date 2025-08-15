@@ -1,0 +1,70 @@
+---
+name: CI/CD
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+  workflow_dispatch:
+    inputs:
+      workflow:
+        required: true
+        type: choice
+        options:
+          - lint
+          - release
+        description: Choose the workflow to run
+        default: lint
+jobs:
+  github-actions-lint:
+    if: >
+      github.event_name == 'push'
+      || github.event_name == 'pull_request'
+      || (github.event_name == 'workflow_dispatch' && inputs.workflow == 'lint')
+    uses: dceoy/gh-actions-for-devops/.github/workflows/github-actions-lint.yml@main
+    with:
+      search-path: .github/workflows
+      go-version: stable
+      python-version: 3.x
+  toml-lint:
+    if: >
+      github.event_name == 'push'
+      || github.event_name == 'pull_request'
+      || (github.event_name == 'workflow_dispatch' && inputs.workflow == 'lint')
+    uses: dceoy/gh-actions-for-devops/.github/workflows/toml-lint.yml@main
+    with:
+      search-path: .github/workflows
+      go-version: stable
+  github-release:
+    if: >
+      github.event_name == 'workflow_dispatch' && inputs.workflow == 'release'
+    permissions:
+      contents: write
+    uses: dceoy/gh-actions-for-devops/.github/workflows/github-release.yml@main
+    with:
+      create-new-tag: false
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  dependabot-auto-merge:
+    if: >
+      github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
+    needs:
+      - go-lint-and-scan
+      - github-actions-lint
+      - toml-lint
+      - docker-lint-and-scan
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    uses: dceoy/gh-actions-for-devops/.github/workflows/dependabot-auto-merge.yml@main
+    with:
+      unconditional: true
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
