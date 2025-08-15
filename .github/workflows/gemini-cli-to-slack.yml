@@ -78,6 +78,8 @@ jobs:
   gemini-to-slack:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
       - name: Run Gemini CLI
         id: gemini-cli
         continue-on-error: true
@@ -103,6 +105,7 @@ jobs:
             raw_output="(No response returned by run-gemini-cli)"
           fi
           escaped_output=${raw_output//\"/\\\"}
+          escaped_output=${escaped_output//$'\n'/\\n}
           if (( ${#escaped_output} > MAX_OUTPUT_LENGTH )); then
             escaped_output="${escaped_output:0:max_len}... (truncated)"
           fi
@@ -116,9 +119,9 @@ jobs:
               echo 'text=:x: Failure'
               echo 'summary_plain=Gemini CLI failed'
             fi
-            echo "escaped_output=${escaped_output}"
             echo "ts=$(date +%s)"
           } | tee -a "${GITHUB_OUTPUT}"
+          echo "escaped_output=${escaped_output}" >> "${GITHUB_OUTPUT}"
       - name: Send Slack message
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a  # v2.1.1
         with:
@@ -136,8 +139,7 @@ jobs:
                 author_icon: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
                 title: ${{ inputs.title }}
                 title_link: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-                text: |
-                   ${{ steps.result-normalization.outputs.escaped_output }}
+                text: ${{ steps.result-normalization.outputs.escaped_output }}
                 fields:
                   - title: Prompt
                     value: ${{ inputs.gemini-cli-prompt }}
