@@ -10,17 +10,18 @@ on:
         type: string
         description: String passed to the Gemini CLI's `--prompt` argument
         default: /analyze_market
-      title:
+      translate-results-into:
         required: false
         type: string
-        description: Title for the Slack message
-        default: null
+        description: Language to translate the results into (e.g., Japanese)
+        default: Japanese
 jobs:
   gemini-cli-to-slack:
     uses: ./.github/workflows/gemini-cli-to-slack.yml
     with:
       gemini-cli-prompt: ${{ inputs.gemini-cli-prompt || '/analyze_market' }}
-      title: ${{ inputs.title || 'Gemini CLI Result :milky_way:' }}
+      translate-results-into: ${{ inputs.translate-results-into || 'Japanese' }}
     secrets:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
       SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}

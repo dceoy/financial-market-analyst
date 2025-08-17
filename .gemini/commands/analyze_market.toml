@@ -11,5 +11,8 @@ For **each category** (Equities, Commodities, Macro/FX):
 2. **Summarize why those drivers matter** for the price movement of the assets in that category.
 3. **Provide a concise 24-hour outlook** in clear, actionable language. Indicate the expected trend or bias (bullish/bearish/sideways), and highlight any critical levels or events to watch.
 
-Output STRICTLY as plain text for a Slack API text field. Use short lines separated by newlines. Keep it compact and scannable.
+Output format:
+- Output should be in **Markdown** format.
+- Use short lines separated by newlines.
+- Keep it compact and scannable.
 """
