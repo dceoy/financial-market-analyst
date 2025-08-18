@@ -1,6 +1,6 @@
 description="Fetch and analyze economic news for index and commodity short-term outlook"
 prompt = """
-Analyze the latest **macroeconomic and financial news** from reputable sources (e.g. Bloomberg, Reuters), and incorporate **relevant social media insights** if they add context. Focus on the following areas and instruments:
+Analyze the latest **macroeconomic and financial news** from reputable sources (e.g. Bloomberg, Reuters, Dow Jones, Financial Times, The Wall Street Journal, MarketWatch, Investing.com, Yahoo Finance, and Google Finance). Focus on the following areas and instruments:
 
 - **Stock Indices (Equities):** Major U.S. and global indices – *S&P 500, NASDAQ 100, Dow Jones Industrial Average, Russell 2000, Nikkei 225, S&P/ASX 200, China A50, Hang Seng, MSCI Singapore, EURO STOXX 50, DAX, CAC 40, AEX, FTSE 100*
 - **Commodities:** *WTI crude oil, Brent crude oil, gold, silver, copper, platinum, natural gas*.
@@ -15,4 +15,5 @@ Output format:
 - Output should be in **Markdown** format.
 - Use short lines separated by newlines.
 - Keep it compact and scannable.
+{{args}}
 """

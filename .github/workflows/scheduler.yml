@@ -9,19 +9,13 @@ on:
         required: false
         type: string
         description: String passed to the Gemini CLI's `--prompt` argument
-        default: /analyze_market
-      translate-results-into:
-        required: false
-        type: string
-        description: Language to translate the results into (e.g., Japanese)
-        default: Japanese
+        default: /analyze_market - Translate the analysis results to Japanese.
 jobs:
   gemini-cli-to-slack:
     uses: ./.github/workflows/gemini-cli-to-slack.yml
     with:
-      gemini-cli-prompt: ${{ inputs.gemini-cli-prompt || '/analyze_market' }}
-      translate-results-into: ${{ inputs.translate-results-into || 'Japanese' }}
+      gemini-cli-prompt: ${{ inputs.gemini-cli-prompt || '/analyze_market - Translate the analysis results to Japanese.' }}
     secrets:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
       SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
+      SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
