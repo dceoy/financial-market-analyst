@@ -16,6 +16,8 @@ jobs:
     uses: ./.github/workflows/gemini-cli-to-slack.yml
     with:
       gemini-cli-prompt: ${{ inputs.gemini-cli-prompt || '/analyze_market - Translate the analysis results to Japanese, and write them into a file named `./slack_message.txt` in Slack mrkdwn format.' }}
+      gemini-cli-settings: >
+        {"usageStatisticsEnabled": false}
       slack-message-text-file-path: ./slack_message.txt
     secrets:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
