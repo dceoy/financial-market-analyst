@@ -1,0 +1,151 @@
+---
+name: Codex CLI with Slack notification
+on:
+  workflow_dispatch:
+    inputs:
+      codex-cli-prompt:
+        required: true
+        type: string
+        description: String passed to the Codex CLI as the primary prompt
+      codex-cli-system-prompt:
+        required: false
+        type: string
+        description: Optional system prompt prepended to the chat completion
+        default: null
+      codex-cli-model:
+        required: false
+        type: string
+        description: OpenAI model identifier to use for the Codex CLI invocation
+        default: gpt-4o-mini
+      validate-codex-cli-run-outcome:
+        required: false
+        type: boolean
+        description: Whether to validate the outcome of the Codex CLI run
+        default: true
+      slack-message-text-file-path:
+        required: false
+        type: string
+        description: Path to a file containing the text of the Slack message
+        default: null
+  workflow_call:
+    inputs:
+      codex-cli-prompt:
+        required: true
+        type: string
+        description: String passed to the Codex CLI as the primary prompt
+      codex-cli-system-prompt:
+        required: false
+        type: string
+        description: Optional system prompt prepended to the chat completion
+        default: null
+      codex-cli-model:
+        required: false
+        type: string
+        description: OpenAI model identifier to use for the Codex CLI invocation
+        default: gpt-4o-mini
+      validate-codex-cli-run-outcome:
+        required: false
+        type: boolean
+        description: Whether to validate the outcome of the Codex CLI run
+        default: true
+      slack-message-text-file-path:
+        required: false
+        type: string
+        description: Path to a file containing the text of the Slack message
+        default: null
+    secrets:
+      CODEX_API_KEY:
+        required: true
+        description: OpenAI API key used by the Codex CLI step
+      SLACK_API_TOKEN:
+        required: true
+        description: Slack API token
+      SLACK_CHANNEL_ID:
+        required: true
+        description: Slack channel ID for the Slack message
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+    working-directory: .
+jobs:
+  codex-to-slack:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    env:
+      CODEX_MODEL: ${{ inputs.codex-cli-model || 'gpt-4o-mini' }}
+    steps:
+      - name: Validate the Slack channel ID and API token
+        env:
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
+        run: |
+          if [[ -z "${SLACK_CHANNEL_ID}" ]]; then
+            echo "Error: SLACK_CHANNEL_ID is not set." >&2
+            exit 1
+          elif [[ -z "${SLACK_API_TOKEN}" ]]; then
+            echo "Error: SLACK_API_TOKEN is not set." >&2
+            exit 2
+          fi
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Prepare Codex prompt
+        id: prepare-codex-prompt
+        env:
+          CODEX_PROMPT: ${{ inputs.codex-cli-prompt }}
+          CODEX_SYSTEM_PROMPT: ${{ inputs['codex-cli-system-prompt'] }}
+        run: |
+          mkdir -p codex-prompt
+          prompt_file="codex-prompt/prompt.txt"
+          : > "${prompt_file}"
+          if [[ -n "${CODEX_SYSTEM_PROMPT}" && "${CODEX_SYSTEM_PROMPT}" != "null" ]]; then
+            printf "%s\n\n" "${CODEX_SYSTEM_PROMPT}" >> "${prompt_file}"
+          fi
+          printf "%s\n" "${CODEX_PROMPT}" >> "${prompt_file}"
+          echo "prompt_file=${prompt_file}" >> "${GITHUB_OUTPUT}"
+      - name: Run Codex with the provided prompt
+        id: codex-cli-run
+        uses: openai/codex-action@7116b19ef68e6c1c6c6124de6ec48ff063388886  # v1
+        with:
+          openai-api-key: ${{ secrets.CODEX_API_KEY }}
+          prompt-file: ${{ steps.prepare-codex-prompt.outputs.prompt_file }}
+          model: ${{ env.CODEX_MODEL }}
+      - name: Validate Codex run outcome
+        if: >
+          inputs.validate-codex-cli-run-outcome && steps.codex-cli-run.outcome != 'success'
+        run: |
+          echo "Error: Failed to create Slack message payload." >&2
+          exit 1
+      - name: Create a Slack message payload JSON from the Codex CLI results
+        id: create-slack-payload
+        env:
+          CODEX_FINAL_MESSAGE: ${{ steps.codex-cli-run.outputs['final-message'] }}
+          SLACK_MESSAGE_TEXT_FILE_PATH: ${{ inputs.slack-message-text-file-path }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        run: |
+          {
+            if [[ -n "${SLACK_MESSAGE_TEXT_FILE_PATH}" ]]; then
+              cat "${SLACK_MESSAGE_TEXT_FILE_PATH}"
+            elif [[ -n "${CODEX_FINAL_MESSAGE}" ]]; then
+              echo "${CODEX_FINAL_MESSAGE}"
+            else
+              echo
+            fi
+          } \
+            | jq -crRs --arg channel "${SLACK_CHANNEL_ID}" '{channel:$channel, text:.} | "slack_payload_json=\(.)"' \
+            | tee -a "${GITHUB_OUTPUT}"
+      - name: Validate the Slack message payload
+        if: >
+          inputs.validate-codex-cli-run-outcome
+          && fromJson(steps.create-slack-payload.outputs.slack_payload_json).text == ''
+        run: |
+          echo "Error: Slack message payload is empty." >&2
+          exit 1
+      - name: Send the Slack message
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a  # v2.1.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_API_TOKEN }}
+          payload: ${{ steps.create-slack-payload.outputs.slack_payload_json }}
