@@ -107,7 +107,7 @@ jobs:
           echo "prompt_file=${prompt_file}" >> "${GITHUB_OUTPUT}"
       - name: Run Codex with the provided prompt
         id: codex-cli-run
-        uses: openai/codex-action@f7bae02ffafb3037698bd14881b49c28cec06269  # v1
+        uses: openai/codex-action@02e7b2943818fbac9f077c3d1249a198ab358352  # v1
         with:
           openai-api-key: ${{ secrets.CODEX_API_KEY }}
           prompt-file: ${{ steps.prepare-codex-prompt.outputs.prompt_file }}
