@@ -27,14 +27,17 @@ Automated market analysis system that uses Google Gemini to analyze economic new
 ## Usage
 
 ### Automatic Analysis
+
 The workflow runs automatically every 8 hours.
 
 ### Manual Trigger
+
 1. Go to Actions → "Scheduled jobs"
 2. Click "Run workflow"
 3. Optionally provide a custom prompt
 
 ### Command Line
+
 ```bash
 gemini /analyze_market
 ```

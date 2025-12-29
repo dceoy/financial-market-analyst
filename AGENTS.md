@@ -21,6 +21,7 @@ This is a Financial Market Analysis system that uses Google's Gemini CLI to anal
 ### Workflow Architecture
 
 The system operates through GitHub Actions:
+
 - **Scheduled Analysis**: Runs every 8 hours via cron schedule
 - **Manual Trigger**: Can be triggered manually with custom prompts
 - **Slack Integration**: Automatically posts analysis results to configured Slack channel
@@ -31,6 +32,7 @@ The system operates through GitHub Actions:
 ### Running Analysis Manually
 
 Trigger the analysis workflow via GitHub Actions UI:
+
 1. Go to Actions → "Scheduled jobs" workflow
 2. Click "Run workflow"
 3. Optional: Provide custom prompt (default analyzes market and translates to Japanese)
@@ -38,6 +40,7 @@ Trigger the analysis workflow via GitHub Actions UI:
 ### Testing Workflows Locally
 
 For workflow validation:
+
 ```bash
 # Lint GitHub Actions workflows
 actionlint .github/workflows/*.yml
@@ -49,6 +52,7 @@ taplo fmt --check .gemini/commands/*.toml
 ### Required Secrets
 
 The following GitHub secrets must be configured:
+
 - `GEMINI_API_KEY`: Google Gemini API key
 - `SLACK_API_TOKEN`: Slack bot token with chat:write permissions
 - `SLACK_CHANNEL_ID`: Target Slack channel ID
@@ -62,11 +66,13 @@ The following GitHub secrets must be configured:
 ## Analysis Scope
 
 The `/analyze_market` command analyzes:
+
 - **Stock Indices**: S&P 500, NASDAQ 100, Dow Jones, Russell 2000, Nikkei 225, and major global indices
 - **Commodities**: Oil (WTI/Brent), precious metals (gold, silver, platinum), copper, natural gas
 - **Macro/FX**: US Treasury yields, DXY, VIX, USD/JPY, EUR/USD
 
 Output includes:
+
 - Key short-term drivers for each category
 - Why these drivers matter for price movements
 - 24-hour outlook with trend bias (bullish/bearish/sideways)
