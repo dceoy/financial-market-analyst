@@ -46,7 +46,7 @@ on:
         description: Path to a file containing the text of the Slack message
         default: null
     secrets:
-      CODEX_API_KEY:
+      OPENAI_API_KEY:
         required: true
         description: OpenAI API key used by the Codex CLI step
       SLACK_API_TOKEN:
@@ -67,12 +67,12 @@ jobs:
     steps:
       - name: Validate the Slack channel ID and API token
         env:
-          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
           SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
         run: |
-          if [[ -z "${CODEX_API_KEY}" ]]; then
-            echo "Error: CODEX_API_KEY is not set." >&2
+          if [[ -z "${OPENAI_API_KEY}" ]]; then
+            echo "Error: OPENAI_API_KEY is not set." >&2
             exit 1
           elif [[ -z "${SLACK_CHANNEL_ID}" ]]; then
             echo "Error: SLACK_CHANNEL_ID is not set." >&2
@@ -91,9 +91,10 @@ jobs:
         uses: openai/codex-action@086169432f1d2ab2f4057540b1754d550f6a1189  # v1
         with:
           prompt: ${{ inputs.codex-prompt }}
-          codex-home: ${{ inputs.codex-home }}
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
         env:
-          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY }}
+          CODEX_HOME: ${{ inputs.codex-home }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       - name: Validate Codex run outcome
         if: >
           inputs.validate-codex-run-outcome && steps.codex-run.outcome != 'success'
