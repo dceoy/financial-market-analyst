@@ -16,7 +16,12 @@ on:
         required: false
         type: string
         description: OpenAI model identifier to use for the Codex CLI invocation
-        default: gpt-4o-mini
+        default: gpt-oss
+      codex-cli-base-url:
+        required: false
+        type: string
+        description: 'OpenAI-compatible base URL (OpenRouter: https://openrouter.ai/api/v1)'
+        default: https://openrouter.ai/api/v1
       validate-codex-cli-run-outcome:
         required: false
         type: boolean
@@ -42,7 +47,12 @@ on:
         required: false
         type: string
         description: OpenAI model identifier to use for the Codex CLI invocation
-        default: gpt-4o-mini
+        default: gpt-oss
+      codex-cli-base-url:
+        required: false
+        type: string
+        description: 'OpenAI-compatible base URL (OpenRouter: https://openrouter.ai/api/v1)'
+        default: https://openrouter.ai/api/v1
       validate-codex-cli-run-outcome:
         required: false
         type: boolean
@@ -73,7 +83,8 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     env:
-      CODEX_MODEL: ${{ inputs.codex-cli-model || 'gpt-4o-mini' }}
+      CODEX_MODEL: ${{ inputs.codex-cli-model || 'gpt-oss' }}
+      OPENAI_BASE_URL: ${{ inputs.codex-cli-base-url || 'https://openrouter.ai/api/v1' }}
     steps:
       - name: Validate the Slack channel ID and API token
         env:
@@ -90,6 +101,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
         with:
+          fetch-depth: 1
           persist-credentials: false
       - name: Prepare Codex prompt
         id: prepare-codex-prompt
@@ -103,6 +115,7 @@ jobs:
           if [[ -n "${CODEX_SYSTEM_PROMPT}" && "${CODEX_SYSTEM_PROMPT}" != "null" ]]; then
             printf "%s\n\n" "${CODEX_SYSTEM_PROMPT}" >> "${prompt_file}"
           fi
+          printf "%s\n\n" "\$market-brief" >> "${prompt_file}"
           printf "%s\n" "${CODEX_PROMPT}" >> "${prompt_file}"
           echo "prompt_file=${prompt_file}" >> "${GITHUB_OUTPUT}"
       - name: Run Codex with the provided prompt
