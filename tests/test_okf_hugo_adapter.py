@@ -416,6 +416,29 @@ def test_validate_aims_policy_empty_tags(
     assert "tags should be a non-empty list" in capsys.readouterr().err
 
 
+def test_validate_aims_policy_missing_sources(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    src = tmp_path / "okf"
+    dst = tmp_path / "dst"
+    src.mkdir()
+    (src / "index.md").write_text("# Knowledge\n", encoding="utf-8")
+    (src / "concepts").mkdir()
+    (src / "concepts" / "c.md").write_text(
+        "---\n"
+        "title: C\n"
+        "description: Desc\n"
+        "type: concept\n"
+        "tags: [sales]\n"
+        "generated: {by: process:test-suite, at: 2026-01-01T00:00:00Z}\n"
+        "---\n"
+        "# C\n",
+        encoding="utf-8",
+    )
+    assert okf_hugo_adapter.main(["--src", str(src), "--dst", str(dst), "--check"]) == 1
+    assert "recommended field 'sources' is missing" in capsys.readouterr().err
+
+
 def test_validate_links_skips_external_and_mailto(tmp_path: Path) -> None:
     src = tmp_path / "okf"
     dst = tmp_path / "dst"
