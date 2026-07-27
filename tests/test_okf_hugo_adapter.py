@@ -612,6 +612,48 @@ def test_validate_v02_accepts_all_standard_metadata(tmp_path: Path) -> None:
             "# Concept\n",
             ["'sources' must not be an empty list"],
         ),
+        (
+            {"type": "Attested Computation", "runtime": "python"},
+            "# Concept\n",
+            ["requires a 'computation' path or a non-empty body"],
+        ),
+        (
+            {"type": "Attested Computation", "runtime": "python"},
+            "# Computation\n\n",
+            ["requires a 'computation' path or a non-empty body"],
+        ),
+        (
+            {"type": "Attested Computation", "runtime": "python"},
+            "# Computation\n```python\n\n```\n",
+            ["requires a 'computation' path or a non-empty body"],
+        ),
+        (
+            {
+                "type": "Attested Computation",
+                "runtime": "python",
+                "computation": "references/computations/example.py",
+            },
+            "# Computation\n```python\npass\n```\n",
+            ["must not set both a 'computation' path"],
+        ),
+        (
+            {
+                "type": "concept",
+                "sources": [
+                    {"resource": "references/policy.md", "usage_count": 1},
+                ],
+            },
+            "# Concept\n",
+            ["'sources[0].usage_count' requires"],
+        ),
+        (
+            {
+                "type": "concept",
+                "usage_window": {"from": "2026-07-27", "to": "2026-07-01"},
+            },
+            "# Concept\n",
+            ["'usage_window' must satisfy 'from' <= 'to'"],
+        ),
     ],
 )
 def test_validate_v02_rejects_invalid_metadata(
@@ -624,3 +666,25 @@ def test_validate_v02_rejects_invalid_metadata(
     errors = okf_hugo_adapter.validate_v02_metadata(document)
     for fragment in expected:
         assert any(fragment in error for error in errors)
+
+
+def test_validate_v02_accepts_inline_computation_body(tmp_path: Path) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = "# Computation\n```python\npass\n```\n"
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_accepts_usage_count_with_document_level_window(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "concept",
+        "sources": [{"resource": "references/policy.md", "usage_count": 1}],
+        "usage_window": {"from": "2026-07-01", "to": "2026-07-27"},
+    }
+    document = validation_document(tmp_path, metadata)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []

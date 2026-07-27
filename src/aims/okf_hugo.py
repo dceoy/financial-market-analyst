@@ -35,6 +35,9 @@ LINK = re.compile(r"(?<!!)\[(?P<label>[^\]]+)\]\((?P<target>[^)]+)\)")
 TAG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 ACTOR = re.compile(r"^(?:[a-z][a-z0-9-]*:[^\s:]+|[^/\s]+/[^/\s]+)$")
 CITATIONS_HEADING = re.compile(r"(?m)^# Citations\s*$")
+COMPUTATION_SECTION = re.compile(
+    r"(?ms)^# Computation\s*\n+```[^\n]*\n(?P<code>.*?)\n```"
+)
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RECOMMENDED_CONCEPT_FIELDS = ("title", "description", "tags", "generated", "sources")
 ROOT_INDEX_ALLOWED_FIELDS = {"okf_version"}
@@ -379,6 +382,11 @@ def _metadata_error(document: OkfDocument, message: str) -> str:
     return f"AIMS policy error: {document.source}: {message}"
 
 
+def _has_computation_body(body: str) -> bool:
+    match = COMPUTATION_SECTION.search(body)
+    return bool(match and match.group("code").strip())
+
+
 def _validate_actor_event(
     document: OkfDocument, field: str, event: object
 ) -> list[str]:
@@ -405,7 +413,7 @@ def _validate_usage_window(
 ) -> list[str]:
     if not isinstance(value, dict):
         return [_metadata_error(document, f"'{field}' must be a mapping")]
-    return [
+    errors = [
         _metadata_error(
             document,
             f"'{field}.{boundary}' must be an ISO 8601 date",
@@ -413,6 +421,11 @@ def _validate_usage_window(
         for boundary in ("from", "to")
         if not _valid_date(value.get(boundary))
     ]
+    if not errors and value["from"] > value["to"]:
+        errors.append(
+            _metadata_error(document, f"'{field}' must satisfy 'from' <= 'to'")
+        )
+    return errors
 
 
 def _validate_sources(document: OkfDocument, value: object) -> list[str]:
@@ -450,16 +463,26 @@ def _validate_sources(document: OkfDocument, value: object) -> list[str]:
                     f"'{field}.author' must follow the OKF v0.2 actor convention",
                 )
             )
-        if "usage_count" in source and (
-            not isinstance(source["usage_count"], int)
-            or isinstance(source["usage_count"], bool)
-            or source["usage_count"] < 0
-        ):
-            errors.append(
-                _metadata_error(
-                    document, f"'{field}.usage_count' must be a non-negative integer"
+        if "usage_count" in source:
+            if (
+                not isinstance(source["usage_count"], int)
+                or isinstance(source["usage_count"], bool)
+                or source["usage_count"] < 0
+            ):
+                errors.append(
+                    _metadata_error(
+                        document,
+                        f"'{field}.usage_count' must be a non-negative integer",
+                    )
                 )
-            )
+            if "usage_window" not in source and "usage_window" not in document.metadata:
+                errors.append(
+                    _metadata_error(
+                        document,
+                        f"'{field}.usage_count' requires '{field}.usage_window' "
+                        "or a document-level 'usage_window'",
+                    )
+                )
         if "last_modified" in source and not _valid_date(source["last_modified"]):
             errors.append(
                 _metadata_error(
@@ -588,15 +611,32 @@ def validate_v02_metadata(document: OkfDocument) -> list[str]:
                 document, "attester", metadata["attester"], receipt=False
             )
         )
-    if metadata.get("type") == "Attested Computation" and not _is_non_empty_string(
-        metadata.get("runtime")
-    ):
-        errors.append(
-            _metadata_error(
-                document,
-                "'runtime' is required for an Attested Computation",
+    if metadata.get("type") == "Attested Computation":
+        if not _is_non_empty_string(metadata.get("runtime")):
+            errors.append(
+                _metadata_error(
+                    document,
+                    "'runtime' is required for an Attested Computation",
+                )
             )
-        )
+        has_computation_file = _is_non_empty_string(metadata.get("computation"))
+        has_computation_body = _has_computation_body(document.body)
+        if has_computation_file and has_computation_body:
+            errors.append(
+                _metadata_error(
+                    document,
+                    "an Attested Computation must not set both a 'computation' "
+                    "path and a body '# Computation' fenced code block",
+                )
+            )
+        elif not has_computation_file and not has_computation_body:
+            errors.append(
+                _metadata_error(
+                    document,
+                    "an Attested Computation requires a 'computation' path or "
+                    "a non-empty body '# Computation' fenced code block",
+                )
+            )
     return errors
 
 
