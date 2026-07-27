@@ -10,16 +10,16 @@ generated:
 status: stable
 sources:
   - id: local-qa-skill
-    resource: .agents/skills/local-qa/SKILL.md
+    resource: https://github.com/dceoy/aims/blob/main/.agents/skills/local-qa/SKILL.md
     title: Local QA skill
   - id: market-analysis-skill
-    resource: .agents/skills/market-analysis/SKILL.md
+    resource: https://github.com/dceoy/aims/blob/main/.agents/skills/market-analysis/SKILL.md
     title: Market analysis skill
   - id: cfd-instruments-skill
-    resource: .agents/skills/update-cfd-instruments/SKILL.md
+    resource: https://github.com/dceoy/aims/blob/main/.agents/skills/update-cfd-instruments/SKILL.md
     title: CFD instrument update skill
   - id: okf-author-skill
-    resource: .agents/skills/aims-okf-author/SKILL.md
+    resource: https://github.com/dceoy/aims/blob/main/.agents/skills/aims-okf-author/SKILL.md
     title: AIMS OKF authoring skill
 ---
 

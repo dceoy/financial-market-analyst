@@ -607,6 +607,11 @@ def test_validate_v02_accepts_all_standard_metadata(tmp_path: Path) -> None:
             "# Concept\n",
             ["'verified' must not be an empty list"],
         ),
+        (
+            {"type": "concept", "sources": []},
+            "# Concept\n",
+            ["'sources' must not be an empty list"],
+        ),
     ],
 )
 def test_validate_v02_rejects_invalid_metadata(

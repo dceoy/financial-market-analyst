@@ -9,13 +9,13 @@ params:
     id: okf/concepts/instrument-master
     sources:
     - id: operations
-      resource: OPERATIONS.md
+      resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
       title: AIMS operations guide
     - id: cfd-schema
-      resource: data/schema/cfd_instruments.schema.json
+      resource: https://github.com/dceoy/aims/blob/main/data/schema/cfd_instruments.schema.json
       title: CFD instrument schema
     - id: cfd-instruments-skill
-      resource: .agents/skills/update-cfd-instruments/SKILL.md
+      resource: https://github.com/dceoy/aims/blob/main/.agents/skills/update-cfd-instruments/SKILL.md
       title: CFD instrument update skill
     status: stable
   okf_source: concepts/instrument-master.md

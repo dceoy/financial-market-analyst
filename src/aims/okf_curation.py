@@ -40,6 +40,7 @@ MIN_SPAN_DAYS: Final[int] = 14
 RETIREMENT_DAYS: Final[int] = 60
 JACCARD_THRESHOLD: Final[float] = 0.5
 THEME_TAG: Final[str] = "qualitative-theme"
+REPO_BLOB_URL: Final[str] = "https://github.com/dceoy/aims/blob/main"
 
 _DATE_RE: Final[re.Pattern[str]] = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _TOKEN_RE: Final[re.Pattern[str]] = re.compile(r"[^a-z0-9]+")
@@ -285,7 +286,7 @@ def concept_skeleton(cluster: ThemeCluster, as_of: str) -> str:
         line
         for source in sources
         for line in (
-            f"  - resource: {source}",
+            f"  - resource: {REPO_BLOB_URL}/{source}",
             f"    title: Qualitative analysis artifact {Path(source).stem}",
         )
     ]

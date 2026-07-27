@@ -10,13 +10,13 @@ generated:
 status: stable
 sources:
   - id: operations
-    resource: OPERATIONS.md
+    resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
     title: AIMS operations guide
   - id: repository-readme
-    resource: README.md
+    resource: https://github.com/dceoy/aims/blob/main/README.md
     title: AIMS README
   - id: report-golden
-    resource: tests/golden/2024-01-01-market-analysis.md
+    resource: https://github.com/dceoy/aims/blob/main/tests/golden/2024-01-01-market-analysis.md
     title: Market analysis report golden
 ---
 

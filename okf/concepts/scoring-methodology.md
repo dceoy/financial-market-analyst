@@ -10,13 +10,13 @@ generated:
 status: stable
 sources:
   - id: operations
-    resource: OPERATIONS.md
+    resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
     title: AIMS operations guide
   - id: analysis-schema
-    resource: data/schema/analysis.schema.json
+    resource: https://github.com/dceoy/aims/blob/main/data/schema/analysis.schema.json
     title: Market analysis schema
   - id: repository-guidelines
-    resource: AGENTS.md
+    resource: https://github.com/dceoy/aims/blob/main/AGENTS.md
     title: Repository guidelines
 ---
 

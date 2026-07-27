@@ -418,6 +418,8 @@ def _validate_usage_window(
 def _validate_sources(document: OkfDocument, value: object) -> list[str]:
     if not isinstance(value, list):
         return [_metadata_error(document, "'sources' must be a list")]
+    if not value:
+        return [_metadata_error(document, "'sources' must not be an empty list")]
     errors: list[str] = []
     for index, source in enumerate(value):
         field = f"sources[{index}]"

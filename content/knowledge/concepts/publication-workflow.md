@@ -9,13 +9,13 @@ params:
     id: okf/concepts/publication-workflow
     sources:
     - id: operations
-      resource: OPERATIONS.md
+      resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
       title: AIMS operations guide
     - id: daily-analysis-workflow
-      resource: .github/workflows/daily-market-analysis.yml
+      resource: https://github.com/dceoy/aims/blob/main/.github/workflows/daily-market-analysis.yml
       title: Daily market analysis workflow
     - id: ci-workflow
-      resource: .github/workflows/ci.yml
+      resource: https://github.com/dceoy/aims/blob/main/.github/workflows/ci.yml
       title: Continuous integration workflow
     status: stable
   okf_source: concepts/publication-workflow.md

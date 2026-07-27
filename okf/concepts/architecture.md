@@ -10,10 +10,10 @@ generated:
 status: stable
 sources:
   - id: repository-guidelines
-    resource: AGENTS.md
+    resource: https://github.com/dceoy/aims/blob/main/AGENTS.md
     title: Repository guidelines
   - id: repository-readme
-    resource: README.md
+    resource: https://github.com/dceoy/aims/blob/main/README.md
     title: AIMS README
 ---
 

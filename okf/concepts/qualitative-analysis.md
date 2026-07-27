@@ -10,10 +10,10 @@ generated:
 status: stable
 sources:
   - id: operations
-    resource: OPERATIONS.md
+    resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
     title: AIMS operations guide
   - id: qualitative-schema
-    resource: data/schema/qualitative.schema.json
+    resource: https://github.com/dceoy/aims/blob/main/data/schema/qualitative.schema.json
     title: Qualitative analysis schema
 ---
 

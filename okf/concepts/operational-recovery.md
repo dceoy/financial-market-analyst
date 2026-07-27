@@ -10,10 +10,10 @@ generated:
 status: stable
 sources:
   - id: operations
-    resource: OPERATIONS.md
+    resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
     title: AIMS operations guide
   - id: local-qa-skill
-    resource: .agents/skills/local-qa/SKILL.md
+    resource: https://github.com/dceoy/aims/blob/main/.agents/skills/local-qa/SKILL.md
     title: Local QA skill
 ---
 

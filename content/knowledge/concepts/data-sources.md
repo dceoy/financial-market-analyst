@@ -9,13 +9,13 @@ params:
     id: okf/concepts/data-sources
     sources:
     - id: operations
-      resource: OPERATIONS.md
+      resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
       title: AIMS operations guide
     - id: daily-analysis-workflow
-      resource: .github/workflows/daily-market-analysis.yml
+      resource: https://github.com/dceoy/aims/blob/main/.github/workflows/daily-market-analysis.yml
       title: Daily market analysis workflow
     - id: cfd-update-workflow
-      resource: .github/workflows/update-cfd-instruments.yml
+      resource: https://github.com/dceoy/aims/blob/main/.github/workflows/update-cfd-instruments.yml
       title: CFD instrument update workflow
     status: stable
   okf_source: concepts/data-sources.md

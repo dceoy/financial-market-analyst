@@ -27,11 +27,11 @@ generated:
 status: draft
 theme_tokens: [copper, squeeze, supply, tightens]
 sources:
-  - resource: data/qualitative/2024-01-01.json
+  - resource: https://github.com/dceoy/aims/blob/main/data/qualitative/2024-01-01.json
     title: Qualitative analysis artifact 2024-01-01
-  - resource: data/qualitative/2024-01-10.json
+  - resource: https://github.com/dceoy/aims/blob/main/data/qualitative/2024-01-10.json
     title: Qualitative analysis artifact 2024-01-10
-  - resource: data/qualitative/2024-01-20.json
+  - resource: https://github.com/dceoy/aims/blob/main/data/qualitative/2024-01-20.json
     title: Qualitative analysis artifact 2024-01-20
 ---
 
