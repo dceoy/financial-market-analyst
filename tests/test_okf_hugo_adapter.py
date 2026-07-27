@@ -654,6 +654,21 @@ def test_validate_v02_accepts_all_standard_metadata(tmp_path: Path) -> None:
             "# Concept\n",
             ["'usage_window' must satisfy 'from' <= 'to'"],
         ),
+        (
+            {"type": "concept", "status": ["stable"]},
+            "# Concept\n",
+            ["'status' must be draft, stable, or deprecated"],
+        ),
+        (
+            {"type": "concept", "status": {"value": "stable"}},
+            "# Concept\n",
+            ["'status' must be draft, stable, or deprecated"],
+        ),
+        (
+            {"type": "Attested Computation", "runtime": "python"},
+            "# Computation\n```python\nfirst()\n```\n```python\nsecond()\n```\n",
+            ["must contain exactly one fenced code block"],
+        ),
     ],
 )
 def test_validate_v02_rejects_invalid_metadata(
@@ -674,6 +689,18 @@ def test_validate_v02_accepts_inline_computation_body(tmp_path: Path) -> None:
         "runtime": "python",
     }
     body = "# Computation\n```python\npass\n```\n"
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_accepts_shell_comment_lines_inside_computation_fence(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "bash",
+    }
+    body = "# Computation\n```bash\n# install deps\nmake build\n```\n"
     document = validation_document(tmp_path, metadata, body)
     assert okf_hugo_adapter.validate_v02_metadata(document) == []
 

@@ -35,9 +35,8 @@ LINK = re.compile(r"(?<!!)\[(?P<label>[^\]]+)\]\((?P<target>[^)]+)\)")
 TAG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 ACTOR = re.compile(r"^(?:[a-z][a-z0-9-]*:[^\s:]+|[^/\s]+/[^/\s]+)$")
 CITATIONS_HEADING = re.compile(r"(?m)^# Citations\s*$")
-COMPUTATION_SECTION = re.compile(
-    r"(?ms)^# Computation\s*\n+```[^\n]*\n(?P<code>.*?)\n```"
-)
+COMPUTATION_HEADING = re.compile(r"(?m)^# Computation\s*\n")
+CONSECUTIVE_FENCED_BLOCK = re.compile(r"\s*```[^\n]*\n(?P<code>.*?)\n```", re.DOTALL)
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RECOMMENDED_CONCEPT_FIELDS = ("title", "description", "tags", "generated", "sources")
 ROOT_INDEX_ALLOWED_FIELDS = {"okf_version"}
@@ -382,9 +381,19 @@ def _metadata_error(document: OkfDocument, message: str) -> str:
     return f"AIMS policy error: {document.source}: {message}"
 
 
-def _has_computation_body(body: str) -> bool:
-    match = COMPUTATION_SECTION.search(body)
-    return bool(match and match.group("code").strip())
+def _computation_body_block_count(body: str) -> int:
+    heading = COMPUTATION_HEADING.search(body)
+    if not heading:
+        return 0
+    position = heading.end()
+    count = 0
+    while True:
+        match = CONSECUTIVE_FENCED_BLOCK.match(body, position)
+        if not match:
+            return count
+        if match.group("code").strip():
+            count += 1
+        position = match.end()
 
 
 def _validate_actor_event(
@@ -566,7 +575,10 @@ def validate_v02_metadata(document: OkfDocument) -> list[str]:
         errors.append(
             _metadata_error(document, "'resource' must be a non-empty URI or path")
         )
-    if "status" in metadata and metadata["status"] not in LIFECYCLE_STATUSES:
+    if "status" in metadata and (
+        not isinstance(metadata["status"], str)
+        or metadata["status"] not in LIFECYCLE_STATUSES
+    ):
         errors.append(
             _metadata_error(document, "'status' must be draft, stable, or deprecated")
         )
@@ -620,7 +632,8 @@ def validate_v02_metadata(document: OkfDocument) -> list[str]:
                 )
             )
         has_computation_file = _is_non_empty_string(metadata.get("computation"))
-        has_computation_body = _has_computation_body(document.body)
+        computation_block_count = _computation_body_block_count(document.body)
+        has_computation_body = computation_block_count > 0
         if has_computation_file and has_computation_body:
             errors.append(
                 _metadata_error(
@@ -635,6 +648,14 @@ def validate_v02_metadata(document: OkfDocument) -> list[str]:
                     document,
                     "an Attested Computation requires a 'computation' path or "
                     "a non-empty body '# Computation' fenced code block",
+                )
+            )
+        elif not has_computation_file and computation_block_count > 1:
+            errors.append(
+                _metadata_error(
+                    document,
+                    "an Attested Computation body '# Computation' section must "
+                    "contain exactly one fenced code block",
                 )
             )
     return errors
