@@ -2,17 +2,24 @@
 description: Runbook-oriented knowledge for restoring AIMS analysis, validation, and
   publication workflows.
 params:
-  okf_extra:
+  okf_metadata:
+    generated:
+      at: '2026-07-27T00:00:00Z'
+      by: process:aims-okf-migration
     id: okf/concepts/operational-recovery
-    status: seeded
+    sources:
+    - id: operations
+      resource: OPERATIONS.md
+      title: AIMS operations guide
+    - id: local-qa-skill
+      resource: .agents/skills/local-qa/SKILL.md
+      title: Local QA skill
+    status: stable
+  okf_source: concepts/operational-recovery.md
   okf_type: concept
-resource:
-  path: okf/concepts/operational-recovery.md
-  source: repository
 tags:
 - operations
 - recovery
-timestamp: '2026-06-16T00:00:00Z'
 title: Operational Recovery
 type: knowledge
 ---
@@ -35,8 +42,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Publication Workflow](../publication-workflow/)
 - [Agent Skills](../agent-skills/)
-
-# Citations
-
-- `OPERATIONS.md`
-- `.agents/skills/local-qa/SKILL.md`

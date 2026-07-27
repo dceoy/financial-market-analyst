@@ -21,12 +21,18 @@ title: Copper supply squeeze deepens
 description: TODO — one-sentence qualitative description of the durable driver.
 type: concept
 tags: [qualitative-theme]
-timestamp: 2024-06-01T00:00:00Z
-resource:
-  path: okf/concepts/theme-copper-supply-squeeze-deepens.md
-  source: repository
-status: proposed
+generated:
+  by: process:aims-okf-curator
+  at: 2024-06-01T00:00:00Z
+status: draft
 theme_tokens: [copper, squeeze, supply, tightens]
+sources:
+  - resource: data/qualitative/2024-01-01.json
+    title: Qualitative analysis artifact 2024-01-01
+  - resource: data/qualitative/2024-01-10.json
+    title: Qualitative analysis artifact 2024-01-10
+  - resource: data/qualitative/2024-01-20.json
+    title: Qualitative analysis artifact 2024-01-20
 ---
 
 # Copper supply squeeze deepens
@@ -40,12 +46,6 @@ truth in prose; numeric facts stay pointers into `data/analysis/`.
 - `data/qualitative/2024-01-01.json` (2024-01-01): "Copper supply squeeze tightens" — evidence: ev-a
 - `data/qualitative/2024-01-10.json` (2024-01-10): "Copper supply squeeze persists" — evidence: ev-b
 - `data/qualitative/2024-01-20.json` (2024-01-20): "Copper supply squeeze deepens" — evidence: ev-c
-
-# Citations
-
-- `data/qualitative/2024-01-01.json`
-- `data/qualitative/2024-01-10.json`
-- `data/qualitative/2024-01-20.json`
 ```
 
 ## Per-instrument stance streaks (supporting context)

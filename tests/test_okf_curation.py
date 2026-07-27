@@ -221,8 +221,13 @@ def test_concept_skeleton_shape() -> None:
     skeleton = okf_curation.concept_skeleton(clusters[0], "2024-02-01")
     assert "id: okf/concepts/theme-copper-supply-squeeze" in skeleton
     assert "tags: [qualitative-theme]" in skeleton
+    assert "by: process:aims-okf-curator" in skeleton
+    assert "status: draft" in skeleton
+    assert "sources:" in skeleton
     assert "theme_tokens: [copper, squeeze, supply]" in skeleton
     assert "ev-a, ev-b" in skeleton
+    assert "timestamp:" not in skeleton
+    assert "# Citations" not in skeleton
 
 
 def test_slug_falls_back_when_empty() -> None:

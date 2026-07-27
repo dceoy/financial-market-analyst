@@ -2,18 +2,28 @@
 description: Canonical CFD instrument reference data and validation responsibilities
   in AIMS.
 params:
-  okf_extra:
+  okf_metadata:
+    generated:
+      at: '2026-07-27T00:00:00Z'
+      by: process:aims-okf-migration
     id: okf/concepts/instrument-master
-    status: seeded
+    sources:
+    - id: operations
+      resource: OPERATIONS.md
+      title: AIMS operations guide
+    - id: cfd-schema
+      resource: data/schema/cfd_instruments.schema.json
+      title: CFD instrument schema
+    - id: cfd-instruments-skill
+      resource: .agents/skills/update-cfd-instruments/SKILL.md
+      title: CFD instrument update skill
+    status: stable
+  okf_source: concepts/instrument-master.md
   okf_type: concept
-resource:
-  path: okf/concepts/instrument-master.md
-  source: repository
 tags:
 - cfd
 - data
 - instrument-master
-timestamp: '2026-06-16T00:00:00Z'
 title: Instrument Master
 type: knowledge
 ---
@@ -36,9 +46,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Data Sources](../data-sources/)
 - [Scoring Methodology](../scoring-methodology/)
-
-# Citations
-
-- `OPERATIONS.md`
-- `data/schema/cfd_instruments.schema.json`
-- `.agents/skills/update-cfd-instruments/SKILL.md`

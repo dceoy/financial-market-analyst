@@ -4,11 +4,23 @@ title: Agent Skills
 description: Repository-local Agent Skills that guide AIMS automation, OKF curation, site generation, and PR review.
 type: concept
 tags: [agents, skills, okf]
-timestamp: 2026-06-16T00:00:00Z
-resource:
-  path: okf/concepts/agent-skills.md
-  source: repository
-status: seeded
+generated:
+  by: process:aims-okf-migration
+  at: 2026-07-27T00:00:00Z
+status: stable
+sources:
+  - id: local-qa-skill
+    resource: .agents/skills/local-qa/SKILL.md
+    title: Local QA skill
+  - id: market-analysis-skill
+    resource: .agents/skills/market-analysis/SKILL.md
+    title: Market analysis skill
+  - id: cfd-instruments-skill
+    resource: .agents/skills/update-cfd-instruments/SKILL.md
+    title: CFD instrument update skill
+  - id: okf-author-skill
+    resource: .agents/skills/aims-okf-author/SKILL.md
+    title: AIMS OKF authoring skill
 ---
 
 # Agent Skills
@@ -29,10 +41,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Architecture](/concepts/architecture.md)
 - [Operational Recovery](/concepts/operational-recovery.md)
-
-# Citations
-
-- `.agents/skills/local-qa/SKILL.md`
-- `.agents/skills/market-analysis/SKILL.md`
-- `.agents/skills/update-cfd-instruments/SKILL.md`
-- `.agents/skills/aims-okf-author/SKILL.md`

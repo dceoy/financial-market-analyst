@@ -4,11 +4,17 @@ title: Qualitative Analysis
 description: How the AI qualitative layer adds grounded, citation-bound interpretation around the quantitative signal without becoming a source of numeric truth.
 type: concept
 tags: [qualitative, market-analysis]
-timestamp: 2026-07-04T00:00:00Z
-resource:
-  path: okf/concepts/qualitative-analysis.md
-  source: repository
-status: seeded
+generated:
+  by: process:aims-okf-migration
+  at: 2026-07-27T00:00:00Z
+status: stable
+sources:
+  - id: operations
+    resource: OPERATIONS.md
+    title: AIMS operations guide
+  - id: qualitative-schema
+    resource: data/schema/qualitative.schema.json
+    title: Qualitative analysis schema
 ---
 
 # Qualitative Analysis
@@ -32,8 +38,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 - [Scoring Methodology](/concepts/scoring-methodology.md)
 - [Report Generation](/concepts/report-generation.md)
 - [Publication Workflow](/concepts/publication-workflow.md)
-
-# Citations
-
-- `OPERATIONS.md`
-- `data/schema/qualitative.schema.json`

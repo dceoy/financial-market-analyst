@@ -37,11 +37,13 @@ Do not commit secrets or local environment files. Operational details, scheduled
 
 ## OKF Knowledge Layer
 
-OKF v0.1 Draft primary references: [specification](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) and [Google Cloud announcement](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing).
+OKF v0.2 primary references: [specification](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) and [Google Cloud announcement](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing).
 
 - Treat `okf/` as the canonical source for durable AIMS knowledge.
 - Treat `content/knowledge/` as generated Hugo shadow content; do not hand-edit it.
-- Treat OKF v0.1 `index.md` and `log.md` as reserved files, not concept documents; do not add concept front matter to those files.
+- Treat OKF v0.2 `index.md` and `log.md` as reserved files, not concept documents; do not add concept front matter to those files.
+- Use `generated: { by, at }` and front matter `sources`; do not use legacy `timestamp` or body-level `# Citations`.
+- Use only `draft`, `stable`, or `deprecated` for concept lifecycle `status`.
 - Keep `data/analysis/*.json` authoritative for numeric market facts, scores, ranks, dates, risk gates, and data availability.
 - Keep `content/results/` as the public daily analysis report output.
 - After OKF edits, regenerate and validate shadow content, then build Hugo:

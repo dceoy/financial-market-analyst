@@ -4,11 +4,20 @@ title: Scoring Methodology
 description: How AIMS treats analysis artifacts, score semantics, ranking outputs, and risk gates as generated numeric facts.
 type: concept
 tags: [scoring, market-analysis]
-timestamp: 2026-06-16T00:00:00Z
-resource:
-  path: okf/concepts/scoring-methodology.md
-  source: repository
-status: seeded
+generated:
+  by: process:aims-okf-migration
+  at: 2026-07-27T00:00:00Z
+status: stable
+sources:
+  - id: operations
+    resource: OPERATIONS.md
+    title: AIMS operations guide
+  - id: analysis-schema
+    resource: data/schema/analysis.schema.json
+    title: Market analysis schema
+  - id: repository-guidelines
+    resource: AGENTS.md
+    title: Repository guidelines
 ---
 
 # Scoring Methodology
@@ -29,9 +38,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Data Sources](/concepts/data-sources.md)
 - [Report Generation](/concepts/report-generation.md)
-
-# Citations
-
-- `OPERATIONS.md`
-- `data/schema/analysis.schema.json`
-- `AGENTS.md`

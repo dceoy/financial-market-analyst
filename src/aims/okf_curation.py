@@ -281,7 +281,14 @@ def concept_skeleton(cluster: ThemeCluster, as_of: str) -> str:
         for occurrence in cluster.occurrences
     ]
     sources = sorted({occurrence.source for occurrence in cluster.occurrences})
-    citations = [f"- `{source}`" for source in sources]
+    source_metadata = [
+        line
+        for source in sources
+        for line in (
+            f"  - resource: {source}",
+            f"    title: Qualitative analysis artifact {Path(source).stem}",
+        )
+    ]
     return "\n".join([
         "---",
         f"id: okf/concepts/theme-{slug}",
@@ -292,12 +299,13 @@ def concept_skeleton(cluster: ThemeCluster, as_of: str) -> str:
         ),
         "type: concept",
         f"tags: [{THEME_TAG}]",
-        f"timestamp: {as_of}T00:00:00Z",
-        "resource:",
-        f"  path: okf/concepts/theme-{slug}.md",
-        "  source: repository",
-        "status: proposed",
+        "generated:",
+        "  by: process:aims-okf-curator",
+        f"  at: {as_of}T00:00:00Z",
+        "status: draft",
         f"theme_tokens: [{tokens}]",
+        "sources:",
+        *source_metadata,
         "---",
         "",
         f"# {title}",
@@ -309,10 +317,6 @@ def concept_skeleton(cluster: ThemeCluster, as_of: str) -> str:
         "## Observed in qualitative artifacts",
         "",
         *observed,
-        "",
-        "# Citations",
-        "",
-        *citations,
     ])
 
 

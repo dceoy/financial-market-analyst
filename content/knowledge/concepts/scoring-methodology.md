@@ -2,17 +2,27 @@
 description: How AIMS treats analysis artifacts, score semantics, ranking outputs,
   and risk gates as generated numeric facts.
 params:
-  okf_extra:
+  okf_metadata:
+    generated:
+      at: '2026-07-27T00:00:00Z'
+      by: process:aims-okf-migration
     id: okf/concepts/scoring-methodology
-    status: seeded
+    sources:
+    - id: operations
+      resource: OPERATIONS.md
+      title: AIMS operations guide
+    - id: analysis-schema
+      resource: data/schema/analysis.schema.json
+      title: Market analysis schema
+    - id: repository-guidelines
+      resource: AGENTS.md
+      title: Repository guidelines
+    status: stable
+  okf_source: concepts/scoring-methodology.md
   okf_type: concept
-resource:
-  path: okf/concepts/scoring-methodology.md
-  source: repository
 tags:
 - scoring
 - market-analysis
-timestamp: '2026-06-16T00:00:00Z'
 title: Scoring Methodology
 type: knowledge
 ---
@@ -35,9 +45,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Data Sources](../data-sources/)
 - [Report Generation](../report-generation/)
-
-# Citations
-
-- `OPERATIONS.md`
-- `data/schema/analysis.schema.json`
-- `AGENTS.md`

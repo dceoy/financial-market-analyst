@@ -7,6 +7,7 @@ import re
 import shutil
 import sys
 from dataclasses import dataclass
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -32,10 +33,14 @@ for first_character, resolvers in list(OkfYamlLoader.yaml_implicit_resolvers.ite
 FRONT_MATTER = re.compile(r"\A---\n(?P<meta>.*?)\n---\n(?P<body>.*)\Z", re.DOTALL)
 LINK = re.compile(r"(?<!!)\[(?P<label>[^\]]+)\]\((?P<target>[^)]+)\)")
 TAG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-RECOMMENDED_CONCEPT_FIELDS = ("title", "description", "tags", "timestamp")
+ACTOR = re.compile(r"^(?:[a-z][a-z0-9-]*:[^\s:]+|[^/\s]+/[^/\s]+)$")
+CITATIONS_HEADING = re.compile(r"(?m)^# Citations\s*$")
+ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+RECOMMENDED_CONCEPT_FIELDS = ("title", "description", "tags", "generated")
 ROOT_INDEX_ALLOWED_FIELDS = {"okf_version"}
 RESERVED_NAMES = {"index.md", "log.md"}
-HUGO_TOP_LEVEL_KEYS = {"title", "description", "tags", "resource", "timestamp"}
+HUGO_TOP_LEVEL_KEYS = {"title", "description", "tags", "resource"}
+LIFECYCLE_STATUSES = {"draft", "stable", "deprecated"}
 
 
 @dataclass(frozen=True)
@@ -89,7 +94,7 @@ def iter_markdown(root: Path) -> list[Path]:
 
 
 def is_reserved(path: Path) -> bool:
-    """Return whether an OKF Markdown path is reserved by OKF v0.1."""
+    """Return whether an OKF Markdown path is reserved by OKF v0.2."""
     return path.name in RESERVED_NAMES
 
 
@@ -139,7 +144,7 @@ def hugo_metadata(document: OkfDocument, src_root: Path) -> dict[str, Any]:
         for key, value in document.metadata.items()
         if key in HUGO_TOP_LEVEL_KEYS
     }
-    extra = {
+    okf_metadata = {
         key: value
         for key, value in document.metadata.items()
         if key not in HUGO_TOP_LEVEL_KEYS and key != "type"
@@ -148,8 +153,9 @@ def hugo_metadata(document: OkfDocument, src_root: Path) -> dict[str, Any]:
     okf_type = document.metadata.get("type")
     if okf_type is not None:
         params["okf_type"] = okf_type
-    if extra:
-        params["okf_extra"] = extra
+    if okf_metadata:
+        params["okf_metadata"] = okf_metadata
+    params["okf_source"] = str(document.source.relative_to(src_root))
     if document.reserved:
         params["okf_reserved"] = document.source.name.removesuffix(".md")
     converted["params"] = params
@@ -159,9 +165,6 @@ def hugo_metadata(document: OkfDocument, src_root: Path) -> dict[str, Any]:
     )
     converted.setdefault(
         "description", f"Generated from {document.source.relative_to(src_root)}."
-    )
-    converted.setdefault(
-        "resource", {"path": str(document.source.relative_to(src_root))}
     )
     return converted
 
@@ -298,7 +301,7 @@ def validate_documents(
 
 
 def validate_reserved_or_concept(document: OkfDocument, src_root: Path) -> list[str]:
-    """Validate OKF v0.1 reserved-file and concept-document rules."""
+    """Validate OKF v0.2 reserved-file and concept-document rules."""
     errors: list[str] = []
     if document.reserved:
         errors.extend(validate_reserved(document, src_root))
@@ -313,11 +316,13 @@ def validate_reserved_or_concept(document: OkfDocument, src_root: Path) -> list[
             "OKF conformance error: "
             f"{document.source}: concept requires non-empty 'type'"
         )
+    else:
+        errors.extend(validate_v02_metadata(document))
     return errors
 
 
 def validate_reserved(document: OkfDocument, src_root: Path) -> list[str]:
-    """Validate OKF v0.1 reserved Markdown files."""
+    """Validate OKF v0.2 reserved Markdown files."""
     errors: list[str] = []
     if document.source.name == "log.md" and document.has_front_matter:
         errors.append(
@@ -335,6 +340,260 @@ def validate_reserved(document: OkfDocument, src_root: Path) -> list[str]:
             "OKF conformance error: "
             f"{document.source}: reserved index.md allows only "
             f"{sorted(allowed_fields)} front matter fields; found {unknown}"
+        )
+    if (
+        document.source == src_root / "index.md"
+        and document.metadata.get("okf_version") != "0.2"
+    ):
+        errors.append(
+            f"AIMS policy error: {document.source}: okf_version must declare '0.2'"
+        )
+    return errors
+
+
+def _is_non_empty_string(value: object) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _valid_datetime(value: object) -> bool:
+    if not isinstance(value, str) or "T" not in value:
+        return False
+    try:
+        datetime.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
+
+
+def _valid_date(value: object) -> bool:
+    if not isinstance(value, str) or not ISO_DATE.fullmatch(value):
+        return False
+    try:
+        date.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
+
+
+def _metadata_error(document: OkfDocument, message: str) -> str:
+    return f"AIMS policy error: {document.source}: {message}"
+
+
+def _validate_actor_event(
+    document: OkfDocument, field: str, event: object
+) -> list[str]:
+    if not isinstance(event, dict):
+        return [_metadata_error(document, f"'{field}' must be a mapping")]
+    errors: list[str] = []
+    actor = event.get("by")
+    if not _is_non_empty_string(actor) or not ACTOR.fullmatch(str(actor)):
+        errors.append(
+            _metadata_error(
+                document,
+                f"'{field}.by' must follow the OKF v0.2 actor convention",
+            )
+        )
+    if not _valid_datetime(event.get("at")):
+        errors.append(
+            _metadata_error(document, f"'{field}.at' must be an ISO 8601 datetime")
+        )
+    return errors
+
+
+def _validate_usage_window(
+    document: OkfDocument, field: str, value: object
+) -> list[str]:
+    if not isinstance(value, dict):
+        return [_metadata_error(document, f"'{field}' must be a mapping")]
+    return [
+        _metadata_error(
+            document,
+            f"'{field}.{boundary}' must be an ISO 8601 date",
+        )
+        for boundary in ("from", "to")
+        if not _valid_date(value.get(boundary))
+    ]
+
+
+def _validate_sources(document: OkfDocument, value: object) -> list[str]:
+    if not isinstance(value, list):
+        return [_metadata_error(document, "'sources' must be a list")]
+    errors: list[str] = []
+    for index, source in enumerate(value):
+        field = f"sources[{index}]"
+        if not isinstance(source, dict):
+            errors.append(_metadata_error(document, f"'{field}' must be a mapping"))
+            continue
+        if not _is_non_empty_string(source.get("resource")):
+            errors.append(
+                _metadata_error(
+                    document, f"'{field}.resource' must be a non-empty string"
+                )
+            )
+        errors.extend(
+            _metadata_error(
+                document,
+                f"'{field}.{optional}' must be a non-empty string",
+            )
+            for optional in ("id", "title")
+            if optional in source and not _is_non_empty_string(source[optional])
+        )
+        if "author" in source and (
+            not _is_non_empty_string(source["author"])
+            or not ACTOR.fullmatch(str(source["author"]))
+        ):
+            errors.append(
+                _metadata_error(
+                    document,
+                    f"'{field}.author' must follow the OKF v0.2 actor convention",
+                )
+            )
+        if "usage_count" in source and (
+            not isinstance(source["usage_count"], int)
+            or isinstance(source["usage_count"], bool)
+            or source["usage_count"] < 0
+        ):
+            errors.append(
+                _metadata_error(
+                    document, f"'{field}.usage_count' must be a non-negative integer"
+                )
+            )
+        if "last_modified" in source and not _valid_date(source["last_modified"]):
+            errors.append(
+                _metadata_error(
+                    document,
+                    f"'{field}.last_modified' must be an ISO 8601 date",
+                )
+            )
+        if "usage_window" in source:
+            errors.extend(
+                _validate_usage_window(
+                    document, f"{field}.usage_window", source["usage_window"]
+                )
+            )
+    return errors
+
+
+def _validate_parameters(document: OkfDocument, value: object) -> list[str]:
+    if not isinstance(value, list):
+        return [_metadata_error(document, "'parameters' must be a list")]
+    errors: list[str] = []
+    for index, parameter in enumerate(value):
+        field = f"parameters[{index}]"
+        if not isinstance(parameter, dict):
+            errors.append(_metadata_error(document, f"'{field}' must be a mapping"))
+            continue
+        errors.extend(
+            _metadata_error(
+                document,
+                f"'{field}.{required_string}' must be a non-empty string",
+            )
+            for required_string in ("name", "type")
+            if not _is_non_empty_string(parameter.get(required_string))
+        )
+        if not isinstance(parameter.get("required"), bool):
+            errors.append(
+                _metadata_error(document, f"'{field}.required' must be a boolean")
+            )
+    return errors
+
+
+def _validate_resource_mapping(
+    document: OkfDocument, field: str, value: object, *, receipt: bool
+) -> list[str]:
+    if not isinstance(value, dict):
+        return [_metadata_error(document, f"'{field}' must be a mapping")]
+    errors: list[str] = []
+    if not _is_non_empty_string(value.get("resource")):
+        errors.append(
+            _metadata_error(document, f"'{field}.resource' must be a non-empty string")
+        )
+    if receipt and (
+        not isinstance(value.get("receipt"), list)
+        or not value["receipt"]
+        or any(not _is_non_empty_string(item) for item in value["receipt"])
+    ):
+        errors.append(
+            _metadata_error(
+                document, f"'{field}.receipt' must be a non-empty string list"
+            )
+        )
+    return errors
+
+
+def validate_v02_metadata(document: OkfDocument) -> list[str]:
+    """Validate standardized OKF v0.2 metadata used by AIMS."""
+    metadata = document.metadata
+    errors: list[str] = []
+    if "timestamp" in metadata:
+        errors.append(
+            _metadata_error(
+                document, "legacy 'timestamp' is superseded by 'generated.at'"
+            )
+        )
+    if CITATIONS_HEADING.search(document.body):
+        errors.append(
+            _metadata_error(
+                document, "body-level '# Citations' is superseded by 'sources'"
+            )
+        )
+    if "resource" in metadata and not _is_non_empty_string(metadata["resource"]):
+        errors.append(
+            _metadata_error(document, "'resource' must be a non-empty URI or path")
+        )
+    if "status" in metadata and metadata["status"] not in LIFECYCLE_STATUSES:
+        errors.append(
+            _metadata_error(document, "'status' must be draft, stable, or deprecated")
+        )
+    if "generated" in metadata:
+        errors.extend(
+            _validate_actor_event(document, "generated", metadata["generated"])
+        )
+    if "verified" in metadata:
+        verified = metadata["verified"]
+        events = verified if isinstance(verified, list) else [verified]
+        if not events:
+            errors.append(
+                _metadata_error(document, "'verified' must not be an empty list")
+            )
+        for index, event in enumerate(events):
+            errors.extend(_validate_actor_event(document, f"verified[{index}]", event))
+    if "stale_after" in metadata and not _valid_date(metadata["stale_after"]):
+        errors.append(
+            _metadata_error(document, "'stale_after' must be an ISO 8601 date")
+        )
+    if "sources" in metadata:
+        errors.extend(_validate_sources(document, metadata["sources"]))
+    if "usage_window" in metadata:
+        errors.extend(
+            _validate_usage_window(document, "usage_window", metadata["usage_window"])
+        )
+    if "computation" in metadata and not _is_non_empty_string(metadata["computation"]):
+        errors.append(
+            _metadata_error(document, "'computation' must be a non-empty URI or path")
+        )
+    if "parameters" in metadata:
+        errors.extend(_validate_parameters(document, metadata["parameters"]))
+    if "executor" in metadata:
+        errors.extend(
+            _validate_resource_mapping(
+                document, "executor", metadata["executor"], receipt=True
+            )
+        )
+    if "attester" in metadata:
+        errors.extend(
+            _validate_resource_mapping(
+                document, "attester", metadata["attester"], receipt=False
+            )
+        )
+    if metadata.get("type") == "Attested Computation" and not _is_non_empty_string(
+        metadata.get("runtime")
+    ):
+        errors.append(
+            _metadata_error(
+                document,
+                "'runtime' is required for an Attested Computation",
+            )
         )
     return errors
 

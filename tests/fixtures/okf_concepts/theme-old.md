@@ -4,7 +4,10 @@ title: Obsolete Regime Theme
 description: A theme fixture that no longer recurs, used to exercise retirement.
 type: concept
 tags: [qualitative-theme]
-timestamp: 2024-01-01T00:00:00Z
+generated:
+  by: process:test-fixture
+  at: 2024-01-01T00:00:00Z
+status: deprecated
 theme_tokens: [obsolete, regime]
 ---
 

@@ -21,6 +21,7 @@ Keep tags lowercase kebab-case. Ensure `okf/index.md` links durable concepts and
 ## Guardrails
 
 - Do not let LLM-authored OKF prose become the source of truth for scores, ranks, dates, prices, risk gates, or data availability.
+- Curator proposals must emit OKF v0.2 `generated`, `sources`, and lifecycle metadata; never reintroduce legacy `timestamp`, `status: proposed`, or body-level `# Citations`.
 - Do not hand-edit `content/knowledge/`; regenerate it from `okf/`.
 - Keep custom code small and deterministic.
 
@@ -69,4 +70,4 @@ includes both) so later passes can assess recurrence and retirement.
 ## OKF primary references
 
 - Google Cloud announcement: https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing
-- OKF v0.1 draft specification: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
+- OKF v0.2 specification: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md

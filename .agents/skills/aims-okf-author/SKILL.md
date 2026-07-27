@@ -21,10 +21,12 @@ Author only `okf/` files first. Use `data/analysis/*.json` for numeric facts and
 ## Guardrails
 
 - Do not let LLM-authored OKF prose become the source of truth for scores, ranks, dates, prices, risk gates, or data availability.
+- Author OKF v0.2 metadata: use `generated: { by, at }`, front matter `sources`, and lifecycle `status` values `draft`, `stable`, or `deprecated`.
+- Do not use legacy `timestamp`, structured self-referential `resource` mappings, or body-level `# Citations` sections.
 - Do not hand-edit `content/knowledge/`; regenerate it from `okf/`.
 - Keep custom code small and deterministic.
 
 ## OKF primary references
 
 - Google Cloud announcement: https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing
-- OKF v0.1 draft specification: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
+- OKF v0.2 specification: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md

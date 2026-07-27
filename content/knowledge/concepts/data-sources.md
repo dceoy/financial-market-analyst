@@ -2,17 +2,27 @@
 description: Authoritative market and instrument data sources used by AIMS and the
   boundaries for durable knowledge updates.
 params:
-  okf_extra:
+  okf_metadata:
+    generated:
+      at: '2026-07-27T00:00:00Z'
+      by: process:aims-okf-migration
     id: okf/concepts/data-sources
-    status: seeded
+    sources:
+    - id: operations
+      resource: OPERATIONS.md
+      title: AIMS operations guide
+    - id: daily-analysis-workflow
+      resource: .github/workflows/daily-market-analysis.yml
+      title: Daily market analysis workflow
+    - id: cfd-update-workflow
+      resource: .github/workflows/update-cfd-instruments.yml
+      title: CFD instrument update workflow
+    status: stable
+  okf_source: concepts/data-sources.md
   okf_type: concept
-resource:
-  path: okf/concepts/data-sources.md
-  source: repository
 tags:
 - data-sources
 - market-analysis
-timestamp: '2026-07-02T00:00:00Z'
 title: Data Sources
 type: knowledge
 ---
@@ -37,9 +47,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Instrument Master](../instrument-master/)
 - [Scoring Methodology](../scoring-methodology/)
-
-# Citations
-
-- `OPERATIONS.md`
-- `.github/workflows/daily-market-analysis.yml`
-- `.github/workflows/update-cfd-instruments.yml`
