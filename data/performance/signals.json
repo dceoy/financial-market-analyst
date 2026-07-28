@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "as_of": "2026-07-27",
+    "as_of": "2026-07-28",
     "config": {
       "horizons": [
         1,
@@ -11,8 +11,8 @@
       "top_k": 5
     },
     "disclaimer": "Informational association only. These figures measure whether the published top-5 quantitative signals outperformed a naive equal-weight basket of the same day's reliable universe in committed data; they are not an investable or executable track record, exclude fees, slippage, financing, and order timing, rest on small overlapping samples, and are not investment advice.",
-    "generated_at": "2026-07-27T00:00:00+00:00",
-    "git_commit": "dad53d4",
+    "generated_at": "2026-07-28T00:00:00+00:00",
+    "git_commit": "eaeac01",
     "inputs": {
       "analysis_dates": [
         "2026-06-29",
@@ -42,36 +42,37 @@
         "2026-07-24",
         "2026-07-25",
         "2026-07-26",
-        "2026-07-27"
+        "2026-07-27",
+        "2026-07-28"
       ]
     }
   },
   "signal_evaluation": {
-    "dates_evaluated": 28,
+    "dates_evaluated": 29,
     "horizons": {
       "1d": {
-        "benchmark_average_return": 0.002424,
+        "benchmark_average_return": 0.000812,
         "by_asset_class": {
           "commodity": {
-            "benchmark_average_return": -3.5e-05,
-            "count": 41,
-            "excess_return": 0.004231,
-            "hit_rate": 0.585366,
-            "top5_average_return": 0.004196
+            "benchmark_average_return": -0.001279,
+            "count": 48,
+            "excess_return": -0.000611,
+            "hit_rate": 0.5,
+            "top5_average_return": -0.00189
           },
           "equity": {
-            "benchmark_average_return": 0.003517,
-            "count": 22,
-            "excess_return": -0.006437,
-            "hit_rate": 0.363636,
-            "top5_average_return": -0.00292
+            "benchmark_average_return": 0.001972,
+            "count": 26,
+            "excess_return": -0.002893,
+            "hit_rate": 0.461538,
+            "top5_average_return": -0.000921
           },
           "equity_index": {
-            "benchmark_average_return": 0.010035,
-            "count": 8,
-            "excess_return": -0.011203,
-            "hit_rate": 0.0,
-            "top5_average_return": -0.001169
+            "benchmark_average_return": 0.003722,
+            "count": 12,
+            "excess_return": -0.002625,
+            "hit_rate": 0.333333,
+            "top5_average_return": 0.001097
           },
           "unknown": {
             "benchmark_average_return": 0.003751,
@@ -83,11 +84,11 @@
         },
         "by_regime": {
           "Bearish": {
-            "benchmark_average_return": -0.001598,
-            "count": 5,
-            "excess_return": -0.007714,
+            "benchmark_average_return": -0.004885,
+            "count": 15,
+            "excess_return": -0.002776,
             "hit_rate": 0.6,
-            "top5_average_return": -0.009312
+            "top5_average_return": -0.007662
           },
           "Bullish": {
             "benchmark_average_return": -0.00535,
@@ -97,11 +98,11 @@
             "top5_average_return": 0.004131
           },
           "Neutral": {
-            "benchmark_average_return": 0.002323,
-            "count": 34,
-            "excess_return": -0.000651,
-            "hit_rate": 0.411765,
-            "top5_average_return": 0.001672
+            "benchmark_average_return": 0.00058,
+            "count": 39,
+            "excess_return": -0.002495,
+            "hit_rate": 0.410256,
+            "top5_average_return": -0.001915
           },
           "Unavailable": {
             "benchmark_average_return": 0.007708,
@@ -111,12 +112,12 @@
             "top5_average_return": 0.002394
           }
         },
-        "count": 83,
-        "excess_return": -0.000696,
-        "hit_rate": 0.457831,
+        "count": 98,
+        "excess_return": -0.001388,
+        "hit_rate": 0.469388,
         "incomplete": 42,
-        "pending": 15,
-        "top5_average_return": 0.001728
+        "pending": 5,
+        "top5_average_return": -0.000576
       },
       "20d": {
         "benchmark_average_return": null,
@@ -125,26 +126,33 @@
         "count": 0,
         "excess_return": null,
         "hit_rate": null,
-        "incomplete": 0,
-        "pending": 140,
+        "incomplete": 3,
+        "pending": 142,
         "top5_average_return": null
       },
       "5d": {
-        "benchmark_average_return": 0.016265,
+        "benchmark_average_return": 0.013199,
         "by_asset_class": {
           "commodity": {
-            "benchmark_average_return": 0.019593,
-            "count": 28,
-            "excess_return": 0.008867,
-            "hit_rate": 0.571429,
-            "top5_average_return": 0.02846
+            "benchmark_average_return": 0.016423,
+            "count": 31,
+            "excess_return": 0.008314,
+            "hit_rate": 0.548387,
+            "top5_average_return": 0.024737
           },
           "equity": {
-            "benchmark_average_return": 0.019352,
-            "count": 6,
-            "excess_return": -0.045818,
-            "hit_rate": 0.166667,
-            "top5_average_return": -0.026465
+            "benchmark_average_return": 0.014707,
+            "count": 7,
+            "excess_return": -0.032877,
+            "hit_rate": 0.285714,
+            "top5_average_return": -0.01817
+          },
+          "equity_index": {
+            "benchmark_average_return": -0.013168,
+            "count": 1,
+            "excess_return": 0.015718,
+            "hit_rate": 1.0,
+            "top5_average_return": 0.002551
           },
           "unknown": {
             "benchmark_average_return": 0.00385,
@@ -163,11 +171,11 @@
             "top5_average_return": 0.000642
           },
           "Neutral": {
-            "benchmark_average_return": 0.018332,
-            "count": 29,
-            "excess_return": 0.00128,
-            "hit_rate": 0.551724,
-            "top5_average_return": 0.019611
+            "benchmark_average_return": 0.013699,
+            "count": 34,
+            "excess_return": 0.003149,
+            "hit_rate": 0.558824,
+            "top5_average_return": 0.016848
           },
           "Unavailable": {
             "benchmark_average_return": 0.009185,
@@ -177,21 +185,24 @@
             "top5_average_return": 0.009282
           }
         },
-        "count": 43,
-        "excess_return": -0.000619,
-        "hit_rate": 0.534884,
+        "count": 48,
+        "excess_return": 0.000903,
+        "hit_rate": 0.541667,
         "incomplete": 62,
         "pending": 35,
-        "top5_average_return": 0.015645
+        "top5_average_return": 0.014101
       }
     }
   },
   "version": "1.0.0",
   "warnings": [
+    "2026-06-29: ^DJI: broken bar chain within 20d forward window",
     "2026-06-29: ^GDAXI: broken bar chain within 1d forward window",
     "2026-06-29: ^GDAXI: broken bar chain within 5d forward window",
+    "2026-06-29: ^GSPC: broken bar chain within 20d forward window",
     "2026-06-29: ^N225: broken bar chain within 1d forward window",
     "2026-06-29: ^N225: broken bar chain within 5d forward window",
+    "2026-06-29: ^NDX: broken bar chain within 20d forward window",
     "2026-06-30: ^GDAXI: broken bar chain within 1d forward window",
     "2026-06-30: ^GDAXI: broken bar chain within 5d forward window",
     "2026-06-30: ^N225: broken bar chain within 1d forward window",
