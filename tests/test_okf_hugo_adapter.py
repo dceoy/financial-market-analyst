@@ -689,6 +689,20 @@ def test_validate_v02_accepts_all_standard_metadata(tmp_path: Path) -> None:
         (
             {
                 "type": "concept",
+                "sources": [
+                    {
+                        "resource": "references/policy.md",
+                        "usage_count": 1,
+                        "usage_window": {"from": "2026-07-01", "to": "2026-07-27"},
+                    },
+                ],
+            },
+            "# Concept\n",
+            ["'sources[0].usage_count' requires a document-level 'usage_window'"],
+        ),
+        (
+            {
+                "type": "concept",
                 "usage_window": {"from": "2026-07-27", "to": "2026-07-01"},
             },
             "# Concept\n",
@@ -869,6 +883,31 @@ def test_validate_v02_ignores_shorter_fence_as_closer(tmp_path: Path) -> None:
         "runtime": "python",
     }
     body = "# Computation\n````python\npass\n```\nend()\n````\n"
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_rejects_backtick_in_backtick_fence_info_string(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = "# Computation\n```python`invalid\npass\n```\n"
+    document = validation_document(tmp_path, metadata, body)
+    errors = okf_hugo_adapter.validate_v02_metadata(document)
+    assert any("requires a 'computation' path or a non-empty body" in e for e in errors)
+
+
+def test_validate_v02_accepts_backtick_in_tilde_fence_info_string(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = "# Computation\n~~~python`ok\npass\n~~~\n"
     document = validation_document(tmp_path, metadata, body)
     assert okf_hugo_adapter.validate_v02_metadata(document) == []
 

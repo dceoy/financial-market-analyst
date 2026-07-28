@@ -414,6 +414,22 @@ def _closing_fence(line: str, marker: str) -> bool:
     )
 
 
+def _fence_opener(line: str) -> re.Match[str] | None:
+    """Return the ``FENCE_LINE`` match if ``line`` validly opens a fence.
+
+    CommonMark forbids a backtick in a backtick fence's info string (a
+    line such as ` ```python`invalid ` is not a fence at all); tilde
+    fences carry no such restriction.
+    """
+    match = FENCE_LINE.match(line)
+    if match is None:
+        return None
+    marker = match.group("marker")
+    if marker[0] == "`" and "`" in line[match.end() :]:
+        return None
+    return match
+
+
 def _iter_body_lines(body: str) -> Iterator[tuple[str, str | None]]:
     """Yield each body line paired with its H1 heading text, if any.
 
@@ -433,7 +449,7 @@ def _iter_body_lines(body: str) -> Iterator[tuple[str, str | None]]:
         if heading is not None:
             yield line, heading
             continue
-        fence = FENCE_LINE.match(line)
+        fence = _fence_opener(line)
         if fence:
             marker = fence.group("marker")
         yield line, None
@@ -479,7 +495,7 @@ def _fenced_code_blocks(text: str) -> list[str]:
             else:
                 code_lines.append(line)
         else:
-            fence = FENCE_LINE.match(line)
+            fence = _fence_opener(line)
             if fence:
                 marker = fence.group("marker")
     return blocks
@@ -579,12 +595,12 @@ def _validate_sources(document: OkfDocument, value: object) -> list[str]:
                         f"'{field}.usage_count' must be a non-negative integer",
                     )
                 )
-            if "usage_window" not in source and "usage_window" not in document.metadata:
+            if "usage_window" not in document.metadata:
                 errors.append(
                     _metadata_error(
                         document,
-                        f"'{field}.usage_count' requires '{field}.usage_window' "
-                        "or a document-level 'usage_window'",
+                        f"'{field}.usage_count' requires a document-level "
+                        "'usage_window'",
                     )
                 )
         if "last_modified" in source and not _valid_date(source["last_modified"]):
