@@ -312,6 +312,21 @@ def test_load_artifacts_missing_dir(tmp_path: Path) -> None:
     assert warnings == []
 
 
+def test_load_artifacts_cites_repo_relative_source_for_absolute_dir(
+    tmp_path: Path,
+) -> None:
+    qdir = tmp_path / "qualitative"
+    qdir.mkdir()
+    (qdir / "2024-01-01.json").write_text(
+        json.dumps(_qualitative("2024-01-01", [("Copper", ["ev-a"])])),
+        encoding="utf-8",
+    )
+    artifacts, _warnings = okf_curation.load_artifacts(qdir)
+    assert [source for source, _artifact in artifacts] == [
+        "data/qualitative/2024-01-01.json"
+    ]
+
+
 def test_main_writes_output_file(tmp_path: Path, capsys: Any) -> None:
     qdir = tmp_path / "qualitative"
     qdir.mkdir()
@@ -328,7 +343,13 @@ def test_main_writes_output_file(tmp_path: Path, capsys: Any) -> None:
         str(out),
     ])
     assert code == 0
-    assert "Copper supply squeeze deepens" in out.read_text()
+    rendered = out.read_text()
+    assert "Copper supply squeeze deepens" in rendered
+    assert (
+        "resource: https://github.com/dceoy/aims/blob/main/data/qualitative/"
+        in rendered
+    )
+    assert str(qdir) not in rendered
     assert "Curation proposal written" in capsys.readouterr().out
 
 

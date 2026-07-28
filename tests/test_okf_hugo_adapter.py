@@ -707,6 +707,15 @@ def test_validate_v02_accepts_all_standard_metadata(tmp_path: Path) -> None:
             ),
             ["must contain exactly one fenced code block"],
         ),
+        (
+            {"type": "Attested Computation", "runtime": "python"},
+            (
+                "# Computation\n```python\nfirst()\n```\n"
+                "# Notes\nSome other content.\n"
+                "# Computation\n```python\nsecond()\n```\n"
+            ),
+            ["must contain exactly one fenced code block"],
+        ),
     ],
 )
 def test_validate_v02_rejects_invalid_metadata(
@@ -754,6 +763,45 @@ def test_validate_v02_ignores_fenced_blocks_after_next_heading(
         "# Computation\n```python\npass\n```\n"
         "# Notes\nSome other content.\n```python\nignored()\n```\n"
     )
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_ignores_computation_heading_inside_unrelated_fence(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = (
+        "# Notes\n```text\nExample heading:\n# Computation\n```\n"
+        "# Computation\n```python\nreal()\n```\n"
+    )
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_accepts_tilde_fenced_computation_body(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = "# Computation\n~~~python\npass\n~~~\n"
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_accepts_indented_fenced_computation_body(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = "# Computation\n   ```python\n   pass\n   ```\n"
     document = validation_document(tmp_path, metadata, body)
     assert okf_hugo_adapter.validate_v02_metadata(document) == []
 

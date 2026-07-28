@@ -35,7 +35,9 @@ LINK = re.compile(r"(?<!!)\[(?P<label>[^\]]+)\]\((?P<target>[^)]+)\)")
 TAG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 ACTOR = re.compile(r"^(?:[a-z][a-z0-9-]*:[^\s:]+|[^/\s]+/[^/\s]+)$")
 CITATIONS_HEADING = re.compile(r"(?m)^# Citations\s*$")
-COMPUTATION_HEADING = re.compile(r"(?m)^# Computation\s*\n")
+COMPUTATION_HEADING_LINE = re.compile(r"^# Computation\s*$")
+HEADING_LINE = re.compile(r"^#[ \t]")
+FENCE_LINE = re.compile(r"^ {0,3}(?P<marker>`{3,}|~{3,})")
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RECOMMENDED_CONCEPT_FIELDS = ("title", "description", "tags", "generated", "sources")
 ROOT_INDEX_ALLOWED_FIELDS = {"okf_version"}
@@ -380,27 +382,74 @@ def _metadata_error(document: OkfDocument, message: str) -> str:
     return f"AIMS policy error: {document.source}: {message}"
 
 
-def _computation_body_block_count(body: str) -> int:
-    heading = COMPUTATION_HEADING.search(body)
-    if not heading:
-        return 0
-    count = 0
-    in_fence = False
+def _computation_sections(body: str) -> list[str]:
+    """Text spans following each '# Computation' heading, up to the next H1.
+
+    A line inside any open fence never starts or ends a section, so a
+    fenced code example elsewhere in the body (e.g. one demonstrating
+    ``# install deps`` or even a literal ``# Computation`` line) is never
+    mistaken for a heading.
+    """
+    sections: list[list[str]] = []
+    active = False
+    marker = ""
+    for line in body.splitlines():
+        if marker:
+            if active:
+                sections[-1].append(line)
+            fence = FENCE_LINE.match(line)
+            if (
+                fence
+                and fence.group("marker")[0] == marker[0]
+                and len(fence.group("marker")) >= len(marker)
+            ):
+                marker = ""
+            continue
+        if COMPUTATION_HEADING_LINE.match(line):
+            sections.append([])
+            active = True
+            continue
+        if HEADING_LINE.match(line):
+            active = False
+            continue
+        if active:
+            sections[-1].append(line)
+        fence = FENCE_LINE.match(line)
+        if fence:
+            marker = fence.group("marker")
+    return ["\n".join(section) for section in sections]
+
+
+def _fenced_code_blocks(text: str) -> list[str]:
+    """Non-empty fenced code blocks in ``text`` (``` or ~~~, indent <= 3)."""
+    blocks: list[str] = []
+    marker = ""
     code_lines: list[str] = []
-    for line in body[heading.end() :].splitlines():
-        if in_fence:
-            if line.startswith("```"):
+    for line in text.splitlines():
+        if marker:
+            fence = FENCE_LINE.match(line)
+            if (
+                fence
+                and fence.group("marker")[0] == marker[0]
+                and len(fence.group("marker")) >= len(marker)
+            ):
                 if "".join(code_lines).strip():
-                    count += 1
-                in_fence = False
+                    blocks.append("".join(code_lines))
+                marker = ""
                 code_lines = []
             else:
                 code_lines.append(line)
-        elif line.startswith("```"):
-            in_fence = True
-        elif line.startswith("# "):
-            break
-    return count
+        else:
+            fence = FENCE_LINE.match(line)
+            if fence:
+                marker = fence.group("marker")
+    return blocks
+
+
+def _computation_body_block_count(body: str) -> int:
+    return sum(
+        len(_fenced_code_blocks(section)) for section in _computation_sections(body)
+    )
 
 
 def _validate_actor_event(

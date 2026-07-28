@@ -41,6 +41,7 @@ RETIREMENT_DAYS: Final[int] = 60
 JACCARD_THRESHOLD: Final[float] = 0.5
 THEME_TAG: Final[str] = "qualitative-theme"
 REPO_BLOB_URL: Final[str] = "https://github.com/dceoy/aims/blob/main"
+QUALITATIVE_REPO_DIR: Final[Path] = Path("data/qualitative")
 
 _DATE_RE: Final[re.Pattern[str]] = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _TOKEN_RE: Final[re.Pattern[str]] = re.compile(r"[^a-z0-9]+")
@@ -470,15 +471,14 @@ def load_artifacts(
         except (json.JSONDecodeError, ValueError) as exc:
             warnings.append(f"{path.as_posix()}: skipped unreadable artifact: {exc}")
             continue
-        artifacts.append((path.as_posix(), artifact))
+        source = (QUALITATIVE_REPO_DIR / path.name).as_posix()
+        artifacts.append((source, artifact))
     return artifacts, warnings
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--qualitative-dir", type=Path, default=Path("data/qualitative")
-    )
+    parser.add_argument("--qualitative-dir", type=Path, default=QUALITATIVE_REPO_DIR)
     parser.add_argument("--concepts-dir", type=Path, default=Path("okf/concepts"))
     parser.add_argument(
         "--as-of",
