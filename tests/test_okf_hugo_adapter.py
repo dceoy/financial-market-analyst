@@ -376,6 +376,36 @@ def test_validate_concept_without_front_matter(
     assert "concept requires YAML front matter" in capsys.readouterr().err
 
 
+def test_validate_concept_rejects_non_string_type_list(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    src = tmp_path / "okf"
+    dst = tmp_path / "dst"
+    src.mkdir()
+    (src / "index.md").write_text("# Knowledge\n", encoding="utf-8")
+    (src / "concepts").mkdir()
+    (src / "concepts" / "c.md").write_text(
+        "---\ntitle: C\ntype: [concept]\n---\n# C\n", encoding="utf-8"
+    )
+    assert okf_hugo_adapter.main(["--src", str(src), "--dst", str(dst), "--check"]) == 1
+    assert "concept requires non-empty 'type'" in capsys.readouterr().err
+
+
+def test_validate_concept_rejects_non_string_type_mapping(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    src = tmp_path / "okf"
+    dst = tmp_path / "dst"
+    src.mkdir()
+    (src / "index.md").write_text("# Knowledge\n", encoding="utf-8")
+    (src / "concepts").mkdir()
+    (src / "concepts" / "c.md").write_text(
+        "---\ntitle: C\ntype: {name: concept}\n---\n# C\n", encoding="utf-8"
+    )
+    assert okf_hugo_adapter.main(["--src", str(src), "--dst", str(dst), "--check"]) == 1
+    assert "concept requires non-empty 'type'" in capsys.readouterr().err
+
+
 def test_validate_reserved_log_with_front_matter(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
@@ -669,6 +699,14 @@ def test_validate_v02_accepts_all_standard_metadata(tmp_path: Path) -> None:
             "# Computation\n```python\nfirst()\n```\n```python\nsecond()\n```\n",
             ["must contain exactly one fenced code block"],
         ),
+        (
+            {"type": "Attested Computation", "runtime": "python"},
+            (
+                "# Computation\n```python\nfirst()\n```\nSome explanation.\n"
+                "```python\nsecond()\n```\n"
+            ),
+            ["must contain exactly one fenced code block"],
+        ),
     ],
 )
 def test_validate_v02_rejects_invalid_metadata(
@@ -701,6 +739,21 @@ def test_validate_v02_accepts_shell_comment_lines_inside_computation_fence(
         "runtime": "bash",
     }
     body = "# Computation\n```bash\n# install deps\nmake build\n```\n"
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_ignores_fenced_blocks_after_next_heading(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = (
+        "# Computation\n```python\npass\n```\n"
+        "# Notes\nSome other content.\n```python\nignored()\n```\n"
+    )
     document = validation_document(tmp_path, metadata, body)
     assert okf_hugo_adapter.validate_v02_metadata(document) == []
 

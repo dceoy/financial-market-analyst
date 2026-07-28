@@ -36,7 +36,6 @@ TAG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 ACTOR = re.compile(r"^(?:[a-z][a-z0-9-]*:[^\s:]+|[^/\s]+/[^/\s]+)$")
 CITATIONS_HEADING = re.compile(r"(?m)^# Citations\s*$")
 COMPUTATION_HEADING = re.compile(r"(?m)^# Computation\s*\n")
-CONSECUTIVE_FENCED_BLOCK = re.compile(r"\s*```[^\n]*\n(?P<code>.*?)\n```", re.DOTALL)
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RECOMMENDED_CONCEPT_FIELDS = ("title", "description", "tags", "generated", "sources")
 ROOT_INDEX_ALLOWED_FIELDS = {"okf_version"}
@@ -313,7 +312,7 @@ def validate_reserved_or_concept(document: OkfDocument, src_root: Path) -> list[
             "OKF conformance error: "
             f"{document.source}: concept requires YAML front matter"
         )
-    elif not str(document.metadata.get("type", "")).strip():
+    elif not _is_non_empty_string(document.metadata.get("type")):
         errors.append(
             "OKF conformance error: "
             f"{document.source}: concept requires non-empty 'type'"
@@ -385,15 +384,23 @@ def _computation_body_block_count(body: str) -> int:
     heading = COMPUTATION_HEADING.search(body)
     if not heading:
         return 0
-    position = heading.end()
     count = 0
-    while True:
-        match = CONSECUTIVE_FENCED_BLOCK.match(body, position)
-        if not match:
-            return count
-        if match.group("code").strip():
-            count += 1
-        position = match.end()
+    in_fence = False
+    code_lines: list[str] = []
+    for line in body[heading.end() :].splitlines():
+        if in_fence:
+            if line.startswith("```"):
+                if "".join(code_lines).strip():
+                    count += 1
+                in_fence = False
+                code_lines = []
+            else:
+                code_lines.append(line)
+        elif line.startswith("```"):
+            in_fence = True
+        elif line.startswith("# "):
+            break
+    return count
 
 
 def _validate_actor_event(
