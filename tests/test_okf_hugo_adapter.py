@@ -689,20 +689,6 @@ def test_validate_v02_accepts_all_standard_metadata(tmp_path: Path) -> None:
         (
             {
                 "type": "concept",
-                "sources": [
-                    {
-                        "resource": "references/policy.md",
-                        "usage_count": 1,
-                        "usage_window": {"from": "2026-07-01", "to": "2026-07-27"},
-                    },
-                ],
-            },
-            "# Concept\n",
-            ["'sources[0].usage_count' requires a document-level 'usage_window'"],
-        ),
-        (
-            {
-                "type": "concept",
                 "usage_window": {"from": "2026-07-27", "to": "2026-07-01"},
             },
             "# Concept\n",
@@ -919,6 +905,23 @@ def test_validate_v02_accepts_usage_count_with_document_level_window(
         "type": "concept",
         "sources": [{"resource": "references/policy.md", "usage_count": 1}],
         "usage_window": {"from": "2026-07-01", "to": "2026-07-27"},
+    }
+    document = validation_document(tmp_path, metadata)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_accepts_usage_count_with_source_level_window_override(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "concept",
+        "sources": [
+            {
+                "resource": "references/policy.md",
+                "usage_count": 1,
+                "usage_window": {"from": "2026-07-01", "to": "2026-07-27"},
+            },
+        ],
     }
     document = validation_document(tmp_path, metadata)
     assert okf_hugo_adapter.validate_v02_metadata(document) == []

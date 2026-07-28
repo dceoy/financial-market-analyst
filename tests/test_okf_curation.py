@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import re
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -218,10 +220,11 @@ def test_retirement_candidates_flags_stale_and_never_seen() -> None:
 def test_concept_skeleton_shape() -> None:
     artifacts = _tagged("2024-01-01", [("Copper Supply Squeeze", ["ev-a", "ev-b"])])
     clusters, _ = okf_curation.cluster_themes(artifacts)
-    skeleton = okf_curation.concept_skeleton(clusters[0], "2024-02-01")
+    skeleton = okf_curation.concept_skeleton(clusters[0], "2024-02-01T00:00:00Z")
     assert "id: okf/concepts/theme-copper-supply-squeeze" in skeleton
     assert "tags: [qualitative-theme]" in skeleton
     assert "by: process:aims-okf-curator" in skeleton
+    assert "at: 2024-02-01T00:00:00Z" in skeleton
     assert "status: draft" in skeleton
     assert "sources:" in skeleton
     assert "theme_tokens: [copper, squeeze, supply]" in skeleton
@@ -279,7 +282,10 @@ _MISSING_CONCEPTS = Path("tests/fixtures/okf_concepts_missing")
 
 def test_render_proposal_populated_matches_golden() -> None:
     rendered = okf_curation.render_proposal(
-        _promotable(), _FIXTURE_CONCEPTS, "2024-06-01"
+        _promotable(),
+        _FIXTURE_CONCEPTS,
+        "2024-06-01",
+        generated_at="2024-06-01T00:00:00Z",
     )
     assert rendered == (GOLDEN / "okf-curation-proposal.md").read_text()
 
@@ -287,6 +293,19 @@ def test_render_proposal_populated_matches_golden() -> None:
 def test_render_proposal_empty_matches_golden() -> None:
     rendered = okf_curation.render_proposal([], _MISSING_CONCEPTS, None)
     assert rendered == (GOLDEN / "okf-curation-proposal-empty.md").read_text()
+
+
+def test_render_proposal_generated_at_is_not_derived_from_as_of() -> None:
+    before = datetime.now(tz=UTC).replace(microsecond=0)
+    rendered = okf_curation.render_proposal(
+        _promotable(), _FIXTURE_CONCEPTS, "2024-06-01"
+    )
+    after = datetime.now(tz=UTC).replace(microsecond=0)
+    assert rendered.startswith("# OKF qualitative theme curation proposal — 2024-06-01")
+    match = re.search(r"^  at: (.+)$", rendered, re.MULTILINE)
+    assert match is not None
+    generated_at = datetime.fromisoformat(match.group(1))
+    assert before <= generated_at <= after
 
 
 # ── loading and CLI ──────────────────────────────────────────────────────────

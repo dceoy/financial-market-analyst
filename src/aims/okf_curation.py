@@ -27,7 +27,7 @@ import argparse
 import json
 import re
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, Final, NamedTuple
 
@@ -272,7 +272,7 @@ def _slug(title: str) -> str:
     return slug[:60].rstrip("-") or "theme"
 
 
-def concept_skeleton(cluster: ThemeCluster, as_of: str) -> str:
+def concept_skeleton(cluster: ThemeCluster, generated_at: str) -> str:
     """Ready-to-edit OKF concept draft for a promotion candidate."""
     title = cluster.latest_title
     slug = _slug(title)
@@ -303,7 +303,7 @@ def concept_skeleton(cluster: ThemeCluster, as_of: str) -> str:
         f"tags: [{THEME_TAG}]",
         "generated:",
         "  by: process:aims-okf-curator",
-        f"  at: {as_of}T00:00:00Z",
+        f"  at: {generated_at}",
         "status: draft",
         f"theme_tokens: [{tokens}]",
         "sources:",
@@ -330,7 +330,7 @@ def _artifact_date(artifact: dict[str, Any]) -> str:
     return when
 
 
-def _candidate_section(candidates: list[ThemeCluster], as_of: str) -> list[str]:
+def _candidate_section(candidates: list[ThemeCluster], generated_at: str) -> list[str]:
     if not candidates:
         return [
             (
@@ -358,7 +358,7 @@ def _candidate_section(candidates: list[ThemeCluster], as_of: str) -> list[str]:
             for occurrence in cluster.occurrences
         )
         lines.extend(("", "Draft concept skeleton (edit before committing):", ""))
-        lines.extend(("```", concept_skeleton(cluster, as_of), "```", ""))
+        lines.extend(("```", concept_skeleton(cluster, generated_at), "```", ""))
     return lines[:-1] if not lines[-1] else lines
 
 
@@ -366,6 +366,7 @@ def render_proposal(
     artifacts: list[tuple[str, dict[str, Any]]],
     concepts_dir: Path,
     as_of: str | None,
+    generated_at: str | None = None,
 ) -> str:
     """Render the deterministic curation-proposal Markdown."""
     clusters, warnings = cluster_themes(artifacts)
@@ -376,6 +377,9 @@ def render_proposal(
 
     dates = sorted({_artifact_date(artifact) for _source, artifact in artifacts})
     effective_as_of = as_of or (dates[-1] if dates else None)
+    effective_generated_at = generated_at or (
+        datetime.now(tz=UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    )
     header = f"# OKF qualitative theme curation proposal — {effective_as_of or 'n/a'}"
     if dates:
         scope = (
@@ -394,7 +398,7 @@ def render_proposal(
         "",
         "## Promotion candidates",
         "",
-        *_candidate_section(candidates, effective_as_of or "1970-01-01"),
+        *_candidate_section(candidates, effective_generated_at),
         "",
         "## Per-instrument stance streaks (supporting context)",
         "",

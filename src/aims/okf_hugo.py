@@ -595,12 +595,14 @@ def _validate_sources(document: OkfDocument, value: object) -> list[str]:
                         f"'{field}.usage_count' must be a non-negative integer",
                     )
                 )
-            if "usage_window" not in document.metadata:
+            if "usage_window" not in document.metadata and (
+                "usage_window" not in source
+            ):
                 errors.append(
                     _metadata_error(
                         document,
-                        f"'{field}.usage_count' requires a document-level "
-                        "'usage_window'",
+                        f"'{field}.usage_count' requires a source-level or "
+                        "document-level 'usage_window'",
                     )
                 )
         if "last_modified" in source and not _valid_date(source["last_modified"]):
