@@ -330,6 +330,14 @@ def test_render_page_caps_warning_list() -> None:
     assert "… and 5 more" in rendered
 
 
+def test_render_page_renders_short_warning_list_without_summary() -> None:
+    artifact = _populated_artifact()
+    artifact["warnings"] = ["one warning"]
+    rendered = performance.render_page(artifact)
+    assert "- Warnings (1):\n  - one warning" in rendered
+    assert "… and" not in rendered
+
+
 def test_build_artifact_merges_and_sorts_extra_warnings() -> None:
     analyses = _chain({"AAA": 0.01}, 2)
     qualitative = [_qualitative("2024-01-01", [("AAA", "supportive", "high", [])])]

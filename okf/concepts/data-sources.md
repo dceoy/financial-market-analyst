@@ -4,11 +4,20 @@ title: Data Sources
 description: Authoritative market and instrument data sources used by AIMS and the boundaries for durable knowledge updates.
 type: concept
 tags: [data-sources, market-analysis]
-timestamp: 2026-07-02T00:00:00Z
-resource:
-  path: okf/concepts/data-sources.md
-  source: repository
-status: seeded
+generated:
+  by: process:aims-okf-migration
+  at: 2026-07-27T00:00:00Z
+status: stable
+sources:
+  - id: operations
+    resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
+    title: AIMS operations guide
+  - id: daily-analysis-workflow
+    resource: https://github.com/dceoy/aims/blob/main/.github/workflows/daily-market-analysis.yml
+    title: Daily market analysis workflow
+  - id: cfd-update-workflow
+    resource: https://github.com/dceoy/aims/blob/main/.github/workflows/update-cfd-instruments.yml
+    title: CFD instrument update workflow
 ---
 
 # Data Sources
@@ -31,9 +40,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Instrument Master](/concepts/instrument-master.md)
 - [Scoring Methodology](/concepts/scoring-methodology.md)
-
-# Citations
-
-- `OPERATIONS.md`
-- `.github/workflows/daily-market-analysis.yml`
-- `.github/workflows/update-cfd-instruments.yml`

@@ -2,18 +2,28 @@
 description: How deterministic JSON analysis artifacts become public Hugo market analysis
   reports.
 params:
-  okf_extra:
+  okf_metadata:
+    generated:
+      at: '2026-07-27T00:00:00Z'
+      by: process:aims-okf-migration
     id: okf/concepts/report-generation
-    status: seeded
+    sources:
+    - id: operations
+      resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
+      title: AIMS operations guide
+    - id: repository-readme
+      resource: https://github.com/dceoy/aims/blob/main/README.md
+      title: AIMS README
+    - id: report-golden
+      resource: https://github.com/dceoy/aims/blob/main/tests/golden/2024-01-01-market-analysis.md
+      title: Market analysis report golden
+    status: stable
+  okf_source: concepts/report-generation.md
   okf_type: concept
-resource:
-  path: okf/concepts/report-generation.md
-  source: repository
 tags:
 - reports
 - hugo
 - market-analysis
-timestamp: '2026-06-16T00:00:00Z'
 title: Report Generation
 type: knowledge
 ---
@@ -36,9 +46,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Architecture](../architecture/)
 - [Publication Workflow](../publication-workflow/)
-
-# Citations
-
-- `OPERATIONS.md`
-- `README.md`
-- `tests/golden/2024-01-01-market-analysis.md`

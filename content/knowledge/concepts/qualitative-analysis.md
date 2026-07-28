@@ -2,17 +2,24 @@
 description: How the AI qualitative layer adds grounded, citation-bound interpretation
   around the quantitative signal without becoming a source of numeric truth.
 params:
-  okf_extra:
+  okf_metadata:
+    generated:
+      at: '2026-07-27T00:00:00Z'
+      by: process:aims-okf-migration
     id: okf/concepts/qualitative-analysis
-    status: seeded
+    sources:
+    - id: operations
+      resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
+      title: AIMS operations guide
+    - id: qualitative-schema
+      resource: https://github.com/dceoy/aims/blob/main/data/schema/qualitative.schema.json
+      title: Qualitative analysis schema
+    status: stable
+  okf_source: concepts/qualitative-analysis.md
   okf_type: concept
-resource:
-  path: okf/concepts/qualitative-analysis.md
-  source: repository
 tags:
 - qualitative
 - market-analysis
-timestamp: '2026-07-04T00:00:00Z'
 title: Qualitative Analysis
 type: knowledge
 ---
@@ -38,8 +45,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 - [Scoring Methodology](../scoring-methodology/)
 - [Report Generation](../report-generation/)
 - [Publication Workflow](../publication-workflow/)
-
-# Citations
-
-- `OPERATIONS.md`
-- `data/schema/qualitative.schema.json`

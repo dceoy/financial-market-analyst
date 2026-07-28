@@ -27,7 +27,7 @@ import argparse
 import json
 import re
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, Final, NamedTuple
 
@@ -40,6 +40,8 @@ MIN_SPAN_DAYS: Final[int] = 14
 RETIREMENT_DAYS: Final[int] = 60
 JACCARD_THRESHOLD: Final[float] = 0.5
 THEME_TAG: Final[str] = "qualitative-theme"
+REPO_BLOB_URL: Final[str] = "https://github.com/dceoy/aims/blob/main"
+QUALITATIVE_REPO_DIR: Final[Path] = Path("data/qualitative")
 
 _DATE_RE: Final[re.Pattern[str]] = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _TOKEN_RE: Final[re.Pattern[str]] = re.compile(r"[^a-z0-9]+")
@@ -270,7 +272,7 @@ def _slug(title: str) -> str:
     return slug[:60].rstrip("-") or "theme"
 
 
-def concept_skeleton(cluster: ThemeCluster, as_of: str) -> str:
+def concept_skeleton(cluster: ThemeCluster, generated_at: str) -> str:
     """Ready-to-edit OKF concept draft for a promotion candidate."""
     title = cluster.latest_title
     slug = _slug(title)
@@ -281,7 +283,14 @@ def concept_skeleton(cluster: ThemeCluster, as_of: str) -> str:
         for occurrence in cluster.occurrences
     ]
     sources = sorted({occurrence.source for occurrence in cluster.occurrences})
-    citations = [f"- `{source}`" for source in sources]
+    source_metadata = [
+        line
+        for source in sources
+        for line in (
+            f"  - resource: {REPO_BLOB_URL}/{source}",
+            f"    title: Qualitative analysis artifact {Path(source).stem}",
+        )
+    ]
     return "\n".join([
         "---",
         f"id: okf/concepts/theme-{slug}",
@@ -292,12 +301,13 @@ def concept_skeleton(cluster: ThemeCluster, as_of: str) -> str:
         ),
         "type: concept",
         f"tags: [{THEME_TAG}]",
-        f"timestamp: {as_of}T00:00:00Z",
-        "resource:",
-        f"  path: okf/concepts/theme-{slug}.md",
-        "  source: repository",
-        "status: proposed",
+        "generated:",
+        "  by: process:aims-okf-curator",
+        f"  at: {generated_at}",
+        "status: draft",
         f"theme_tokens: [{tokens}]",
+        "sources:",
+        *source_metadata,
         "---",
         "",
         f"# {title}",
@@ -309,10 +319,6 @@ def concept_skeleton(cluster: ThemeCluster, as_of: str) -> str:
         "## Observed in qualitative artifacts",
         "",
         *observed,
-        "",
-        "# Citations",
-        "",
-        *citations,
     ])
 
 
@@ -324,7 +330,7 @@ def _artifact_date(artifact: dict[str, Any]) -> str:
     return when
 
 
-def _candidate_section(candidates: list[ThemeCluster], as_of: str) -> list[str]:
+def _candidate_section(candidates: list[ThemeCluster], generated_at: str) -> list[str]:
     if not candidates:
         return [
             (
@@ -352,7 +358,7 @@ def _candidate_section(candidates: list[ThemeCluster], as_of: str) -> list[str]:
             for occurrence in cluster.occurrences
         )
         lines.extend(("", "Draft concept skeleton (edit before committing):", ""))
-        lines.extend(("```", concept_skeleton(cluster, as_of), "```", ""))
+        lines.extend(("```", concept_skeleton(cluster, generated_at), "```", ""))
     return lines[:-1] if not lines[-1] else lines
 
 
@@ -360,6 +366,7 @@ def render_proposal(
     artifacts: list[tuple[str, dict[str, Any]]],
     concepts_dir: Path,
     as_of: str | None,
+    generated_at: str | None = None,
 ) -> str:
     """Render the deterministic curation-proposal Markdown."""
     clusters, warnings = cluster_themes(artifacts)
@@ -370,6 +377,9 @@ def render_proposal(
 
     dates = sorted({_artifact_date(artifact) for _source, artifact in artifacts})
     effective_as_of = as_of or (dates[-1] if dates else None)
+    effective_generated_at = generated_at or (
+        datetime.now(tz=UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    )
     header = f"# OKF qualitative theme curation proposal — {effective_as_of or 'n/a'}"
     if dates:
         scope = (
@@ -388,7 +398,7 @@ def render_proposal(
         "",
         "## Promotion candidates",
         "",
-        *_candidate_section(candidates, effective_as_of or "1970-01-01"),
+        *_candidate_section(candidates, effective_generated_at),
         "",
         "## Per-instrument stance streaks (supporting context)",
         "",
@@ -465,15 +475,14 @@ def load_artifacts(
         except (json.JSONDecodeError, ValueError) as exc:
             warnings.append(f"{path.as_posix()}: skipped unreadable artifact: {exc}")
             continue
-        artifacts.append((path.as_posix(), artifact))
+        source = (QUALITATIVE_REPO_DIR / path.name).as_posix()
+        artifacts.append((source, artifact))
     return artifacts, warnings
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--qualitative-dir", type=Path, default=Path("data/qualitative")
-    )
+    parser.add_argument("--qualitative-dir", type=Path, default=QUALITATIVE_REPO_DIR)
     parser.add_argument("--concepts-dir", type=Path, default=Path("okf/concepts"))
     parser.add_argument(
         "--as-of",

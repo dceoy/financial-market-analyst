@@ -4,11 +4,20 @@ title: Instrument Master
 description: Canonical CFD instrument reference data and validation responsibilities in AIMS.
 type: concept
 tags: [cfd, data, instrument-master]
-timestamp: 2026-06-16T00:00:00Z
-resource:
-  path: okf/concepts/instrument-master.md
-  source: repository
-status: seeded
+generated:
+  by: process:aims-okf-migration
+  at: 2026-07-27T00:00:00Z
+status: stable
+sources:
+  - id: operations
+    resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
+    title: AIMS operations guide
+  - id: cfd-schema
+    resource: https://github.com/dceoy/aims/blob/main/data/schema/cfd_instruments.schema.json
+    title: CFD instrument schema
+  - id: cfd-instruments-skill
+    resource: https://github.com/dceoy/aims/blob/main/.agents/skills/update-cfd-instruments/SKILL.md
+    title: CFD instrument update skill
 ---
 
 # Instrument Master
@@ -29,9 +38,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Data Sources](/concepts/data-sources.md)
 - [Scoring Methodology](/concepts/scoring-methodology.md)
-
-# Citations
-
-- `OPERATIONS.md`
-- `data/schema/cfd_instruments.schema.json`
-- `.agents/skills/update-cfd-instruments/SKILL.md`

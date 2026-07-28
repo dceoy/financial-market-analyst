@@ -4,11 +4,17 @@ title: AIMS Architecture
 description: Repository-level architecture for the AIMS analysis pipeline, Hugo site, OKF source, and generated knowledge pages.
 type: concept
 tags: [architecture, okf, hugo]
-timestamp: 2026-06-16T00:00:00Z
-resource:
-  path: okf/concepts/architecture.md
-  source: repository
-status: seeded
+generated:
+  by: process:aims-okf-migration
+  at: 2026-07-27T00:00:00Z
+status: stable
+sources:
+  - id: repository-guidelines
+    resource: https://github.com/dceoy/aims/blob/main/AGENTS.md
+    title: Repository guidelines
+  - id: repository-readme
+    resource: https://github.com/dceoy/aims/blob/main/README.md
+    title: AIMS README
 ---
 
 # AIMS Architecture
@@ -30,8 +36,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 - [Data Sources](/concepts/data-sources.md)
 - [Report Generation](/concepts/report-generation.md)
 - [Publication Workflow](/concepts/publication-workflow.md)
-
-# Citations
-
-- `AGENTS.md`
-- `README.md`

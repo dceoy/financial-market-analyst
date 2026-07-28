@@ -7,10 +7,14 @@ import re
 import shutil
 import sys
 from dataclasses import dataclass
+from datetime import date, datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import yaml
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class OkfYamlLoader(yaml.SafeLoader):
@@ -32,10 +36,16 @@ for first_character, resolvers in list(OkfYamlLoader.yaml_implicit_resolvers.ite
 FRONT_MATTER = re.compile(r"\A---\n(?P<meta>.*?)\n---\n(?P<body>.*)\Z", re.DOTALL)
 LINK = re.compile(r"(?<!!)\[(?P<label>[^\]]+)\]\((?P<target>[^)]+)\)")
 TAG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-RECOMMENDED_CONCEPT_FIELDS = ("title", "description", "tags", "timestamp")
+ACTOR = re.compile(r"^(?:[a-z][a-z0-9-]*:[^\s:]+|[^/\s]+/[^/\s]+)$")
+ATX_H1 = re.compile(r"^ {0,3}#(?:[ \t]+(?P<text>.*))?[ \t]*$")
+TRAILING_ATX_CLOSE = re.compile(r"(?:^|\s)#+[ \t]*$")
+FENCE_LINE = re.compile(r"^ {0,3}(?P<marker>`{3,}|~{3,})")
+ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+RECOMMENDED_CONCEPT_FIELDS = ("title", "description", "tags", "generated", "sources")
 ROOT_INDEX_ALLOWED_FIELDS = {"okf_version"}
 RESERVED_NAMES = {"index.md", "log.md"}
-HUGO_TOP_LEVEL_KEYS = {"title", "description", "tags", "resource", "timestamp"}
+HUGO_TOP_LEVEL_KEYS = {"title", "description", "tags", "resource"}
+LIFECYCLE_STATUSES = {"draft", "stable", "deprecated"}
 
 
 @dataclass(frozen=True)
@@ -89,7 +99,7 @@ def iter_markdown(root: Path) -> list[Path]:
 
 
 def is_reserved(path: Path) -> bool:
-    """Return whether an OKF Markdown path is reserved by OKF v0.1."""
+    """Return whether an OKF Markdown path is reserved by OKF v0.2."""
     return path.name in RESERVED_NAMES
 
 
@@ -139,7 +149,7 @@ def hugo_metadata(document: OkfDocument, src_root: Path) -> dict[str, Any]:
         for key, value in document.metadata.items()
         if key in HUGO_TOP_LEVEL_KEYS
     }
-    extra = {
+    okf_metadata = {
         key: value
         for key, value in document.metadata.items()
         if key not in HUGO_TOP_LEVEL_KEYS and key != "type"
@@ -148,8 +158,9 @@ def hugo_metadata(document: OkfDocument, src_root: Path) -> dict[str, Any]:
     okf_type = document.metadata.get("type")
     if okf_type is not None:
         params["okf_type"] = okf_type
-    if extra:
-        params["okf_extra"] = extra
+    if okf_metadata:
+        params["okf_metadata"] = okf_metadata
+    params["okf_source"] = str(document.source.relative_to(src_root))
     if document.reserved:
         params["okf_reserved"] = document.source.name.removesuffix(".md")
     converted["params"] = params
@@ -159,9 +170,6 @@ def hugo_metadata(document: OkfDocument, src_root: Path) -> dict[str, Any]:
     )
     converted.setdefault(
         "description", f"Generated from {document.source.relative_to(src_root)}."
-    )
-    converted.setdefault(
-        "resource", {"path": str(document.source.relative_to(src_root))}
     )
     return converted
 
@@ -298,7 +306,7 @@ def validate_documents(
 
 
 def validate_reserved_or_concept(document: OkfDocument, src_root: Path) -> list[str]:
-    """Validate OKF v0.1 reserved-file and concept-document rules."""
+    """Validate OKF v0.2 reserved-file and concept-document rules."""
     errors: list[str] = []
     if document.reserved:
         errors.extend(validate_reserved(document, src_root))
@@ -308,16 +316,18 @@ def validate_reserved_or_concept(document: OkfDocument, src_root: Path) -> list[
             "OKF conformance error: "
             f"{document.source}: concept requires YAML front matter"
         )
-    elif not str(document.metadata.get("type", "")).strip():
+    elif not _is_non_empty_string(document.metadata.get("type")):
         errors.append(
             "OKF conformance error: "
             f"{document.source}: concept requires non-empty 'type'"
         )
+    else:
+        errors.extend(validate_v02_metadata(document))
     return errors
 
 
 def validate_reserved(document: OkfDocument, src_root: Path) -> list[str]:
-    """Validate OKF v0.1 reserved Markdown files."""
+    """Validate OKF v0.2 reserved Markdown files."""
     errors: list[str] = []
     if document.source.name == "log.md" and document.has_front_matter:
         errors.append(
@@ -336,6 +346,431 @@ def validate_reserved(document: OkfDocument, src_root: Path) -> list[str]:
             f"{document.source}: reserved index.md allows only "
             f"{sorted(allowed_fields)} front matter fields; found {unknown}"
         )
+    if (
+        document.source == src_root / "index.md"
+        and document.metadata.get("okf_version") != "0.2"
+    ):
+        errors.append(
+            f"AIMS policy error: {document.source}: okf_version must declare '0.2'"
+        )
+    return errors
+
+
+def _is_non_empty_string(value: object) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _valid_datetime(value: object) -> bool:
+    if not isinstance(value, str) or "T" not in value:
+        return False
+    try:
+        datetime.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
+
+
+def _valid_date(value: object) -> bool:
+    if not isinstance(value, str) or not ISO_DATE.fullmatch(value):
+        return False
+    try:
+        date.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
+
+
+def _metadata_error(document: OkfDocument, message: str) -> str:
+    return f"AIMS policy error: {document.source}: {message}"
+
+
+def _h1_text(line: str) -> str | None:
+    """Return the trimmed text of an ATX H1 heading line, or ``None``.
+
+    Recognizes up to three leading spaces and an optional closing ``#``
+    sequence, per the CommonMark ATX heading rules. A bare ``#`` heading
+    yields ``""``, which callers must distinguish from ``None``.
+    """
+    match = ATX_H1.match(line)
+    if match is None:
+        return None
+    text = (match.group("text") or "").strip()
+    return TRAILING_ATX_CLOSE.sub("", text).strip()
+
+
+def _closing_fence(line: str, marker: str) -> bool:
+    """Return whether ``line`` closes a fence opened with ``marker``.
+
+    A closing fence must repeat the opening marker character, be at least
+    as long, and have only trailing whitespace after it; CommonMark
+    permits an info string only on the opening fence.
+    """
+    fence = FENCE_LINE.match(line)
+    return bool(
+        fence
+        and fence.group("marker")[0] == marker[0]
+        and len(fence.group("marker")) >= len(marker)
+        and not line[fence.end() :].strip()
+    )
+
+
+def _fence_opener(line: str) -> re.Match[str] | None:
+    """Return the ``FENCE_LINE`` match if ``line`` validly opens a fence.
+
+    CommonMark forbids a backtick in a backtick fence's info string (a
+    line such as ` ```python`invalid ` is not a fence at all); tilde
+    fences carry no such restriction.
+    """
+    match = FENCE_LINE.match(line)
+    if match is None:
+        return None
+    marker = match.group("marker")
+    if marker[0] == "`" and "`" in line[match.end() :]:
+        return None
+    return match
+
+
+def _iter_body_lines(body: str) -> Iterator[tuple[str, str | None]]:
+    """Yield each body line paired with its H1 heading text, if any.
+
+    ``heading`` is ``None`` unless the line is an ATX H1 heading outside
+    any fenced code block, so headings inside a fenced example (e.g. one
+    demonstrating ``# install deps`` or a literal ``# Computation`` line)
+    are never mistaken for real headings.
+    """
+    marker = ""
+    for line in body.splitlines():
+        if marker:
+            if _closing_fence(line, marker):
+                marker = ""
+            yield line, None
+            continue
+        heading = _h1_text(line)
+        if heading is not None:
+            yield line, heading
+            continue
+        fence = _fence_opener(line)
+        if fence:
+            marker = fence.group("marker")
+        yield line, None
+
+
+def _has_h1(body: str, text: str) -> bool:
+    """Return whether ``body`` has an H1 heading with the given text.
+
+    Headings inside fenced code blocks are ignored.
+    """
+    return any(heading == text for _, heading in _iter_body_lines(body))
+
+
+def _computation_sections(body: str) -> list[str]:
+    """Text spans following each '# Computation' heading, up to the next H1."""
+    sections: list[list[str]] = []
+    active = False
+    for line, heading in _iter_body_lines(body):
+        if heading == "Computation":
+            sections.append([])
+            active = True
+            continue
+        if heading is not None:
+            active = False
+            continue
+        if active:
+            sections[-1].append(line)
+    return ["\n".join(section) for section in sections]
+
+
+def _fenced_code_blocks(text: str) -> list[str]:
+    """Non-empty fenced code blocks in ``text`` (``` or ~~~, indent <= 3)."""
+    blocks: list[str] = []
+    marker = ""
+    code_lines: list[str] = []
+    for line in text.splitlines():
+        if marker:
+            if _closing_fence(line, marker):
+                if "".join(code_lines).strip():
+                    blocks.append("".join(code_lines))
+                marker = ""
+                code_lines = []
+            else:
+                code_lines.append(line)
+        else:
+            fence = _fence_opener(line)
+            if fence:
+                marker = fence.group("marker")
+    return blocks
+
+
+def _computation_body_block_count(body: str) -> int:
+    return sum(
+        len(_fenced_code_blocks(section)) for section in _computation_sections(body)
+    )
+
+
+def _validate_actor_event(
+    document: OkfDocument, field: str, event: object
+) -> list[str]:
+    if not isinstance(event, dict):
+        return [_metadata_error(document, f"'{field}' must be a mapping")]
+    errors: list[str] = []
+    actor = event.get("by")
+    if not _is_non_empty_string(actor) or not ACTOR.fullmatch(str(actor)):
+        errors.append(
+            _metadata_error(
+                document,
+                f"'{field}.by' must follow the OKF v0.2 actor convention",
+            )
+        )
+    if not _valid_datetime(event.get("at")):
+        errors.append(
+            _metadata_error(document, f"'{field}.at' must be an ISO 8601 datetime")
+        )
+    return errors
+
+
+def _validate_usage_window(
+    document: OkfDocument, field: str, value: object
+) -> list[str]:
+    if not isinstance(value, dict):
+        return [_metadata_error(document, f"'{field}' must be a mapping")]
+    errors = [
+        _metadata_error(
+            document,
+            f"'{field}.{boundary}' must be an ISO 8601 date",
+        )
+        for boundary in ("from", "to")
+        if not _valid_date(value.get(boundary))
+    ]
+    if not errors and value["from"] > value["to"]:
+        errors.append(
+            _metadata_error(document, f"'{field}' must satisfy 'from' <= 'to'")
+        )
+    return errors
+
+
+def _validate_sources(document: OkfDocument, value: object) -> list[str]:
+    if not isinstance(value, list):
+        return [_metadata_error(document, "'sources' must be a list")]
+    if not value:
+        return [_metadata_error(document, "'sources' must not be an empty list")]
+    errors: list[str] = []
+    for index, source in enumerate(value):
+        field = f"sources[{index}]"
+        if not isinstance(source, dict):
+            errors.append(_metadata_error(document, f"'{field}' must be a mapping"))
+            continue
+        if not _is_non_empty_string(source.get("resource")):
+            errors.append(
+                _metadata_error(
+                    document, f"'{field}.resource' must be a non-empty string"
+                )
+            )
+        errors.extend(
+            _metadata_error(
+                document,
+                f"'{field}.{optional}' must be a non-empty string",
+            )
+            for optional in ("id", "title")
+            if optional in source and not _is_non_empty_string(source[optional])
+        )
+        if "author" in source and (
+            not _is_non_empty_string(source["author"])
+            or not ACTOR.fullmatch(str(source["author"]))
+        ):
+            errors.append(
+                _metadata_error(
+                    document,
+                    f"'{field}.author' must follow the OKF v0.2 actor convention",
+                )
+            )
+        if "usage_count" in source:
+            if (
+                not isinstance(source["usage_count"], int)
+                or isinstance(source["usage_count"], bool)
+                or source["usage_count"] < 0
+            ):
+                errors.append(
+                    _metadata_error(
+                        document,
+                        f"'{field}.usage_count' must be a non-negative integer",
+                    )
+                )
+            if "usage_window" not in document.metadata and (
+                "usage_window" not in source
+            ):
+                errors.append(
+                    _metadata_error(
+                        document,
+                        f"'{field}.usage_count' requires a source-level or "
+                        "document-level 'usage_window'",
+                    )
+                )
+        if "last_modified" in source and not _valid_date(source["last_modified"]):
+            errors.append(
+                _metadata_error(
+                    document,
+                    f"'{field}.last_modified' must be an ISO 8601 date",
+                )
+            )
+        if "usage_window" in source:
+            errors.extend(
+                _validate_usage_window(
+                    document, f"{field}.usage_window", source["usage_window"]
+                )
+            )
+    return errors
+
+
+def _validate_parameters(document: OkfDocument, value: object) -> list[str]:
+    if not isinstance(value, list):
+        return [_metadata_error(document, "'parameters' must be a list")]
+    errors: list[str] = []
+    for index, parameter in enumerate(value):
+        field = f"parameters[{index}]"
+        if not isinstance(parameter, dict):
+            errors.append(_metadata_error(document, f"'{field}' must be a mapping"))
+            continue
+        errors.extend(
+            _metadata_error(
+                document,
+                f"'{field}.{required_string}' must be a non-empty string",
+            )
+            for required_string in ("name", "type")
+            if not _is_non_empty_string(parameter.get(required_string))
+        )
+        if not isinstance(parameter.get("required"), bool):
+            errors.append(
+                _metadata_error(document, f"'{field}.required' must be a boolean")
+            )
+    return errors
+
+
+def _validate_resource_mapping(
+    document: OkfDocument, field: str, value: object, *, receipt: bool
+) -> list[str]:
+    if not isinstance(value, dict):
+        return [_metadata_error(document, f"'{field}' must be a mapping")]
+    errors: list[str] = []
+    if not _is_non_empty_string(value.get("resource")):
+        errors.append(
+            _metadata_error(document, f"'{field}.resource' must be a non-empty string")
+        )
+    if receipt and (
+        not isinstance(value.get("receipt"), list)
+        or not value["receipt"]
+        or any(not _is_non_empty_string(item) for item in value["receipt"])
+    ):
+        errors.append(
+            _metadata_error(
+                document, f"'{field}.receipt' must be a non-empty string list"
+            )
+        )
+    return errors
+
+
+def validate_v02_metadata(document: OkfDocument) -> list[str]:
+    """Validate standardized OKF v0.2 metadata used by AIMS."""
+    metadata = document.metadata
+    errors: list[str] = []
+    if "timestamp" in metadata:
+        errors.append(
+            _metadata_error(
+                document, "legacy 'timestamp' is superseded by 'generated.at'"
+            )
+        )
+    if _has_h1(document.body, "Citations"):
+        errors.append(
+            _metadata_error(
+                document, "body-level '# Citations' is superseded by 'sources'"
+            )
+        )
+    if "resource" in metadata and not _is_non_empty_string(metadata["resource"]):
+        errors.append(
+            _metadata_error(document, "'resource' must be a non-empty URI or path")
+        )
+    if "status" in metadata and (
+        not isinstance(metadata["status"], str)
+        or metadata["status"] not in LIFECYCLE_STATUSES
+    ):
+        errors.append(
+            _metadata_error(document, "'status' must be draft, stable, or deprecated")
+        )
+    if "generated" in metadata:
+        errors.extend(
+            _validate_actor_event(document, "generated", metadata["generated"])
+        )
+    if "verified" in metadata:
+        verified = metadata["verified"]
+        events = verified if isinstance(verified, list) else [verified]
+        if not events:
+            errors.append(
+                _metadata_error(document, "'verified' must not be an empty list")
+            )
+        for index, event in enumerate(events):
+            errors.extend(_validate_actor_event(document, f"verified[{index}]", event))
+    if "stale_after" in metadata and not _valid_date(metadata["stale_after"]):
+        errors.append(
+            _metadata_error(document, "'stale_after' must be an ISO 8601 date")
+        )
+    if "sources" in metadata:
+        errors.extend(_validate_sources(document, metadata["sources"]))
+    if "usage_window" in metadata:
+        errors.extend(
+            _validate_usage_window(document, "usage_window", metadata["usage_window"])
+        )
+    if "computation" in metadata and not _is_non_empty_string(metadata["computation"]):
+        errors.append(
+            _metadata_error(document, "'computation' must be a non-empty URI or path")
+        )
+    if "parameters" in metadata:
+        errors.extend(_validate_parameters(document, metadata["parameters"]))
+    if "executor" in metadata:
+        errors.extend(
+            _validate_resource_mapping(
+                document, "executor", metadata["executor"], receipt=True
+            )
+        )
+    if "attester" in metadata:
+        errors.extend(
+            _validate_resource_mapping(
+                document, "attester", metadata["attester"], receipt=False
+            )
+        )
+    if metadata.get("type") == "Attested Computation":
+        if not _is_non_empty_string(metadata.get("runtime")):
+            errors.append(
+                _metadata_error(
+                    document,
+                    "'runtime' is required for an Attested Computation",
+                )
+            )
+        has_computation_file = _is_non_empty_string(metadata.get("computation"))
+        computation_block_count = _computation_body_block_count(document.body)
+        has_computation_body = computation_block_count > 0
+        if has_computation_file and has_computation_body:
+            errors.append(
+                _metadata_error(
+                    document,
+                    "an Attested Computation must not set both a 'computation' "
+                    "path and a body '# Computation' fenced code block",
+                )
+            )
+        elif not has_computation_file and not has_computation_body:
+            errors.append(
+                _metadata_error(
+                    document,
+                    "an Attested Computation requires a 'computation' path or "
+                    "a non-empty body '# Computation' fenced code block",
+                )
+            )
+        elif not has_computation_file and computation_block_count > 1:
+            errors.append(
+                _metadata_error(
+                    document,
+                    "an Attested Computation body '# Computation' section must "
+                    "contain exactly one fenced code block",
+                )
+            )
     return errors
 
 

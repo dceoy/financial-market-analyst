@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Backwards-compatible re-export of OKF Hugo adapter from aims.okf_hugo."""
+"""Re-export the OKF v0.2 Hugo adapter from aims.okf_hugo."""
 
 from __future__ import annotations
 
@@ -35,6 +35,7 @@ from aims.okf_hugo import (
     validate_links,
     validate_reserved,
     validate_reserved_or_concept,
+    validate_v02_metadata,
     write_documents,
 )
 
@@ -70,6 +71,7 @@ __all__ = [
     "validate_links",
     "validate_reserved",
     "validate_reserved_or_concept",
+    "validate_v02_metadata",
     "write_documents",
 ]
 

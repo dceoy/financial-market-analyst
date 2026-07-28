@@ -4,11 +4,20 @@ title: Publication Workflow
 description: How CI/CD, pull requests, and GitHub Pages publish AIMS reports and generated OKF shadow content.
 type: concept
 tags: [ci, hugo, publication]
-timestamp: 2026-06-16T00:00:00Z
-resource:
-  path: okf/concepts/publication-workflow.md
-  source: repository
-status: seeded
+generated:
+  by: process:aims-okf-migration
+  at: 2026-07-27T00:00:00Z
+status: stable
+sources:
+  - id: operations
+    resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
+    title: AIMS operations guide
+  - id: daily-analysis-workflow
+    resource: https://github.com/dceoy/aims/blob/main/.github/workflows/daily-market-analysis.yml
+    title: Daily market analysis workflow
+  - id: ci-workflow
+    resource: https://github.com/dceoy/aims/blob/main/.github/workflows/ci.yml
+    title: Continuous integration workflow
 ---
 
 # Publication Workflow
@@ -29,9 +38,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Architecture](/concepts/architecture.md)
 - [Operational Recovery](/concepts/operational-recovery.md)
-
-# Citations
-
-- `OPERATIONS.md`
-- `.github/workflows/daily-market-analysis.yml`
-- `.github/workflows/ci.yml`

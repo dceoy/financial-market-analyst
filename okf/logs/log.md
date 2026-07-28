@@ -1,5 +1,10 @@
 # AIMS OKF Log
 
+## 2026-07-27
+
+- Migrated the canonical bundle, adapter, curator proposals, generated Hugo metadata, skills, and documentation to OKF v0.2 (#160).
+- Replaced legacy concept timestamps and body citation lists with `generated` and `sources` front matter, normalized lifecycle statuses, and removed structured self-referential resources.
+
 ## 2026-07-04
 
 - Added the deterministic qualitative theme curation pass (#96): `curate_themes.py` proposes promotions of recurring themes from `data/qualitative/*.json` into `qualitative-theme`-tagged concepts, with monthly cadence, ≥3-dates/≥14-day promotion criteria, and 60-day retirement criteria documented in the `aims-okf-curator` skill. Ran the first pass: zero qualitative artifacts have accumulated on `main` yet (shadow mode has not produced committed artifacts), so this is a recorded empty pass with no promotions — the first real promotion PR follows once artifacts accumulate.
@@ -7,6 +12,6 @@
 
 ## 2026-06-16
 
-- Established `okf/` as the canonical OKF v0.1 knowledge source for durable AIMS concepts.
+- Established `okf/` as the canonical OKF knowledge source for durable AIMS concepts.
 - Added generated `content/knowledge/` shadow content as Hugo publication output, not a canonical authoring location.
 - Seeded initial concepts for architecture, data sources, instrument master data, scoring methodology, report generation, publication, recovery, and Agent Skills.

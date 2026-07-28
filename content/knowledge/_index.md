@@ -1,11 +1,10 @@
 ---
 description: Generated from index.md.
 params:
-  okf_extra:
-    okf_version: '0.1'
+  okf_metadata:
+    okf_version: '0.2'
   okf_reserved: index
-resource:
-  path: index.md
+  okf_source: index.md
 title: AIMS Knowledge Base
 type: knowledge
 ---

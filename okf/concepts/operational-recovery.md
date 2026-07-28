@@ -4,11 +4,17 @@ title: Operational Recovery
 description: Runbook-oriented knowledge for restoring AIMS analysis, validation, and publication workflows.
 type: concept
 tags: [operations, recovery]
-timestamp: 2026-06-16T00:00:00Z
-resource:
-  path: okf/concepts/operational-recovery.md
-  source: repository
-status: seeded
+generated:
+  by: process:aims-okf-migration
+  at: 2026-07-27T00:00:00Z
+status: stable
+sources:
+  - id: operations
+    resource: https://github.com/dceoy/aims/blob/main/OPERATIONS.md
+    title: AIMS operations guide
+  - id: local-qa-skill
+    resource: https://github.com/dceoy/aims/blob/main/.agents/skills/local-qa/SKILL.md
+    title: Local QA skill
 ---
 
 # Operational Recovery
@@ -29,8 +35,3 @@ AIMS keeps numeric market facts, scores, ranks, dates, risk gates, and data avai
 
 - [Publication Workflow](/concepts/publication-workflow.md)
 - [Agent Skills](/concepts/agent-skills.md)
-
-# Citations
-
-- `OPERATIONS.md`
-- `.agents/skills/local-qa/SKILL.md`
