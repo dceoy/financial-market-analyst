@@ -9,9 +9,12 @@ import sys
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import yaml
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class OkfYamlLoader(yaml.SafeLoader):
@@ -34,9 +37,8 @@ FRONT_MATTER = re.compile(r"\A---\n(?P<meta>.*?)\n---\n(?P<body>.*)\Z", re.DOTAL
 LINK = re.compile(r"(?<!!)\[(?P<label>[^\]]+)\]\((?P<target>[^)]+)\)")
 TAG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 ACTOR = re.compile(r"^(?:[a-z][a-z0-9-]*:[^\s:]+|[^/\s]+/[^/\s]+)$")
-CITATIONS_HEADING = re.compile(r"(?m)^# Citations\s*$")
-COMPUTATION_HEADING_LINE = re.compile(r"^# Computation\s*$")
-HEADING_LINE = re.compile(r"^#[ \t]")
+ATX_H1 = re.compile(r"^ {0,3}#(?:[ \t]+(?P<text>.*))?[ \t]*$")
+TRAILING_ATX_CLOSE = re.compile(r"(?:^|\s)#+[ \t]*$")
 FENCE_LINE = re.compile(r"^ {0,3}(?P<marker>`{3,}|~{3,})")
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RECOMMENDED_CONCEPT_FIELDS = ("title", "description", "tags", "generated", "sources")
@@ -382,41 +384,83 @@ def _metadata_error(document: OkfDocument, message: str) -> str:
     return f"AIMS policy error: {document.source}: {message}"
 
 
-def _computation_sections(body: str) -> list[str]:
-    """Text spans following each '# Computation' heading, up to the next H1.
+def _h1_text(line: str) -> str | None:
+    """Return the trimmed text of an ATX H1 heading line, or ``None``.
 
-    A line inside any open fence never starts or ends a section, so a
-    fenced code example elsewhere in the body (e.g. one demonstrating
-    ``# install deps`` or even a literal ``# Computation`` line) is never
-    mistaken for a heading.
+    Recognizes up to three leading spaces and an optional closing ``#``
+    sequence, per the CommonMark ATX heading rules. A bare ``#`` heading
+    yields ``""``, which callers must distinguish from ``None``.
     """
-    sections: list[list[str]] = []
-    active = False
+    match = ATX_H1.match(line)
+    if match is None:
+        return None
+    text = (match.group("text") or "").strip()
+    return TRAILING_ATX_CLOSE.sub("", text).strip()
+
+
+def _closing_fence(line: str, marker: str) -> bool:
+    """Return whether ``line`` closes a fence opened with ``marker``.
+
+    A closing fence must repeat the opening marker character, be at least
+    as long, and have only trailing whitespace after it; CommonMark
+    permits an info string only on the opening fence.
+    """
+    fence = FENCE_LINE.match(line)
+    return bool(
+        fence
+        and fence.group("marker")[0] == marker[0]
+        and len(fence.group("marker")) >= len(marker)
+        and not line[fence.end() :].strip()
+    )
+
+
+def _iter_body_lines(body: str) -> Iterator[tuple[str, str | None]]:
+    """Yield each body line paired with its H1 heading text, if any.
+
+    ``heading`` is ``None`` unless the line is an ATX H1 heading outside
+    any fenced code block, so headings inside a fenced example (e.g. one
+    demonstrating ``# install deps`` or a literal ``# Computation`` line)
+    are never mistaken for real headings.
+    """
     marker = ""
     for line in body.splitlines():
         if marker:
-            if active:
-                sections[-1].append(line)
-            fence = FENCE_LINE.match(line)
-            if (
-                fence
-                and fence.group("marker")[0] == marker[0]
-                and len(fence.group("marker")) >= len(marker)
-            ):
+            if _closing_fence(line, marker):
                 marker = ""
+            yield line, None
             continue
-        if COMPUTATION_HEADING_LINE.match(line):
+        heading = _h1_text(line)
+        if heading is not None:
+            yield line, heading
+            continue
+        fence = FENCE_LINE.match(line)
+        if fence:
+            marker = fence.group("marker")
+        yield line, None
+
+
+def _has_h1(body: str, text: str) -> bool:
+    """Return whether ``body`` has an H1 heading with the given text.
+
+    Headings inside fenced code blocks are ignored.
+    """
+    return any(heading == text for _, heading in _iter_body_lines(body))
+
+
+def _computation_sections(body: str) -> list[str]:
+    """Text spans following each '# Computation' heading, up to the next H1."""
+    sections: list[list[str]] = []
+    active = False
+    for line, heading in _iter_body_lines(body):
+        if heading == "Computation":
             sections.append([])
             active = True
             continue
-        if HEADING_LINE.match(line):
+        if heading is not None:
             active = False
             continue
         if active:
             sections[-1].append(line)
-        fence = FENCE_LINE.match(line)
-        if fence:
-            marker = fence.group("marker")
     return ["\n".join(section) for section in sections]
 
 
@@ -427,12 +471,7 @@ def _fenced_code_blocks(text: str) -> list[str]:
     code_lines: list[str] = []
     for line in text.splitlines():
         if marker:
-            fence = FENCE_LINE.match(line)
-            if (
-                fence
-                and fence.group("marker")[0] == marker[0]
-                and len(fence.group("marker")) >= len(marker)
-            ):
+            if _closing_fence(line, marker):
                 if "".join(code_lines).strip():
                     blocks.append("".join(code_lines))
                 marker = ""
@@ -621,7 +660,7 @@ def validate_v02_metadata(document: OkfDocument) -> list[str]:
                 document, "legacy 'timestamp' is superseded by 'generated.at'"
             )
         )
-    if CITATIONS_HEADING.search(document.body):
+    if _has_h1(document.body, "Citations"):
         errors.append(
             _metadata_error(
                 document, "body-level '# Citations' is superseded by 'sources'"

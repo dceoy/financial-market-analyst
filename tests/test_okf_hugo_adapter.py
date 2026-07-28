@@ -556,6 +556,11 @@ def test_validate_v02_accepts_all_standard_metadata(tmp_path: Path) -> None:
             ["legacy 'timestamp'", "body-level '# Citations'"],
         ),
         (
+            {"type": "concept"},
+            "# Citations #\n",
+            ["body-level '# Citations'"],
+        ),
+        (
             {
                 "type": "concept",
                 "resource": {},
@@ -665,6 +670,11 @@ def test_validate_v02_accepts_all_standard_metadata(tmp_path: Path) -> None:
             },
             "# Computation\n```python\npass\n```\n",
             ["must not set both a 'computation' path"],
+        ),
+        (
+            {"type": "Attested Computation", "runtime": "python"},
+            "# Computation\n```python\npass\n```not-a-close\n",
+            ["requires a 'computation' path or a non-empty body"],
         ),
         (
             {
@@ -802,6 +812,63 @@ def test_validate_v02_accepts_indented_fenced_computation_body(
         "runtime": "python",
     }
     body = "# Computation\n   ```python\n   pass\n   ```\n"
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_accepts_indented_computation_heading(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = "   # Computation\n```python\npass\n```\n"
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_ends_computation_section_at_indented_next_heading(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = (
+        "# Computation\n```python\npass\n```\n   # Notes\n```python\nignored()\n```\n"
+    )
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_ignores_citations_heading_inside_fence(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {"type": "concept"}
+    body = "# Concept\n```text\nExample heading:\n# Citations\n```\n"
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_ignores_mismatched_fence_character_as_closer(
+    tmp_path: Path,
+) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = "# Computation\n```python\npass\n~~~\nend()\n```\n"
+    document = validation_document(tmp_path, metadata, body)
+    assert okf_hugo_adapter.validate_v02_metadata(document) == []
+
+
+def test_validate_v02_ignores_shorter_fence_as_closer(tmp_path: Path) -> None:
+    metadata: dict[str, Any] = {
+        "type": "Attested Computation",
+        "runtime": "python",
+    }
+    body = "# Computation\n````python\npass\n```\nend()\n````\n"
     document = validation_document(tmp_path, metadata, body)
     assert okf_hugo_adapter.validate_v02_metadata(document) == []
 
