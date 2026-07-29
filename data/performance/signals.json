@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "as_of": "2026-07-28",
+    "as_of": "2026-07-29",
     "config": {
       "horizons": [
         1,
@@ -11,8 +11,8 @@
       "top_k": 5
     },
     "disclaimer": "Informational association only. These figures measure whether the published top-5 quantitative signals outperformed a naive equal-weight basket of the same day's reliable universe in committed data; they are not an investable or executable track record, exclude fees, slippage, financing, and order timing, rest on small overlapping samples, and are not investment advice.",
-    "generated_at": "2026-07-28T00:00:00+00:00",
-    "git_commit": "eaeac01",
+    "generated_at": "2026-07-29T00:00:00+00:00",
+    "git_commit": "85db1ab",
     "inputs": {
       "analysis_dates": [
         "2026-06-29",
@@ -43,15 +43,16 @@
         "2026-07-25",
         "2026-07-26",
         "2026-07-27",
-        "2026-07-28"
+        "2026-07-28",
+        "2026-07-29"
       ]
     }
   },
   "signal_evaluation": {
-    "dates_evaluated": 29,
+    "dates_evaluated": 30,
     "horizons": {
       "1d": {
-        "benchmark_average_return": 0.000812,
+        "benchmark_average_return": 0.000763,
         "by_asset_class": {
           "commodity": {
             "benchmark_average_return": -0.001279,
@@ -61,18 +62,18 @@
             "top5_average_return": -0.00189
           },
           "equity": {
-            "benchmark_average_return": 0.001972,
-            "count": 26,
-            "excess_return": -0.002893,
-            "hit_rate": 0.461538,
-            "top5_average_return": -0.000921
+            "benchmark_average_return": 0.001817,
+            "count": 28,
+            "excess_return": -0.002225,
+            "hit_rate": 0.5,
+            "top5_average_return": -0.000408
           },
           "equity_index": {
-            "benchmark_average_return": 0.003722,
-            "count": 12,
-            "excess_return": -0.002625,
-            "hit_rate": 0.333333,
-            "top5_average_return": 0.001097
+            "benchmark_average_return": 0.002938,
+            "count": 15,
+            "excess_return": -0.000964,
+            "hit_rate": 0.466667,
+            "top5_average_return": 0.001974
           },
           "unknown": {
             "benchmark_average_return": 0.003751,
@@ -98,11 +99,11 @@
             "top5_average_return": 0.004131
           },
           "Neutral": {
-            "benchmark_average_return": 0.00058,
-            "count": 39,
-            "excess_return": -0.002495,
-            "hit_rate": 0.410256,
-            "top5_average_return": -0.001915
+            "benchmark_average_return": 0.000491,
+            "count": 44,
+            "excess_return": -0.001531,
+            "hit_rate": 0.477273,
+            "top5_average_return": -0.001039
           },
           "Unavailable": {
             "benchmark_average_return": 0.007708,
@@ -112,12 +113,12 @@
             "top5_average_return": 0.002394
           }
         },
-        "count": 98,
-        "excess_return": -0.001388,
-        "hit_rate": 0.469388,
+        "count": 103,
+        "excess_return": -0.00103,
+        "hit_rate": 0.495146,
         "incomplete": 42,
         "pending": 5,
-        "top5_average_return": -0.000576
+        "top5_average_return": -0.000267
       },
       "20d": {
         "benchmark_average_return": null,
@@ -126,26 +127,26 @@
         "count": 0,
         "excess_return": null,
         "hit_rate": null,
-        "incomplete": 3,
+        "incomplete": 8,
         "pending": 142,
         "top5_average_return": null
       },
       "5d": {
-        "benchmark_average_return": 0.013199,
+        "benchmark_average_return": 0.009848,
         "by_asset_class": {
           "commodity": {
-            "benchmark_average_return": 0.016423,
-            "count": 31,
-            "excess_return": 0.008314,
-            "hit_rate": 0.548387,
-            "top5_average_return": 0.024737
+            "benchmark_average_return": 0.014075,
+            "count": 33,
+            "excess_return": 0.008284,
+            "hit_rate": 0.545455,
+            "top5_average_return": 0.022359
           },
           "equity": {
-            "benchmark_average_return": 0.014707,
-            "count": 7,
-            "excess_return": -0.032877,
-            "hit_rate": 0.285714,
-            "top5_average_return": -0.01817
+            "benchmark_average_return": 0.003598,
+            "count": 10,
+            "excess_return": -0.010785,
+            "hit_rate": 0.5,
+            "top5_average_return": -0.007187
           },
           "equity_index": {
             "benchmark_average_return": -0.013168,
@@ -164,11 +165,11 @@
         },
         "by_regime": {
           "Bullish": {
-            "benchmark_average_return": 0.022243,
-            "count": 3,
-            "excess_return": -0.021601,
-            "hit_rate": 0.0,
-            "top5_average_return": 0.000642
+            "benchmark_average_return": -0.00561,
+            "count": 8,
+            "excess_return": 0.009139,
+            "hit_rate": 0.5,
+            "top5_average_return": 0.003529
           },
           "Neutral": {
             "benchmark_average_return": 0.013699,
@@ -185,12 +186,12 @@
             "top5_average_return": 0.009282
           }
         },
-        "count": 48,
-        "excess_return": 0.000903,
-        "hit_rate": 0.541667,
+        "count": 53,
+        "excess_return": 0.00342,
+        "hit_rate": 0.566038,
         "incomplete": 62,
         "pending": 35,
-        "top5_average_return": 0.014101
+        "top5_average_return": 0.013267
       }
     }
   },
@@ -198,15 +199,20 @@
   "warnings": [
     "2026-06-29: ^DJI: broken bar chain within 20d forward window",
     "2026-06-29: ^GDAXI: broken bar chain within 1d forward window",
+    "2026-06-29: ^GDAXI: broken bar chain within 20d forward window",
     "2026-06-29: ^GDAXI: broken bar chain within 5d forward window",
     "2026-06-29: ^GSPC: broken bar chain within 20d forward window",
     "2026-06-29: ^N225: broken bar chain within 1d forward window",
+    "2026-06-29: ^N225: broken bar chain within 20d forward window",
     "2026-06-29: ^N225: broken bar chain within 5d forward window",
     "2026-06-29: ^NDX: broken bar chain within 20d forward window",
+    "2026-06-30: ^DJI: broken bar chain within 20d forward window",
     "2026-06-30: ^GDAXI: broken bar chain within 1d forward window",
     "2026-06-30: ^GDAXI: broken bar chain within 5d forward window",
+    "2026-06-30: ^GSPC: broken bar chain within 20d forward window",
     "2026-06-30: ^N225: broken bar chain within 1d forward window",
     "2026-06-30: ^N225: broken bar chain within 5d forward window",
+    "2026-06-30: ^NDX: broken bar chain within 20d forward window",
     "2026-07-01: ^GDAXI: broken bar chain within 1d forward window",
     "2026-07-01: ^GDAXI: broken bar chain within 5d forward window",
     "2026-07-01: ^N225: broken bar chain within 1d forward window",
