@@ -36,6 +36,7 @@ Scheduled events within the next 7 days for covered instruments (from `data/cale
 ## Signal History
 
 Compared with the previous available report (**2026-07-15**).
+
 - **New top-5:** AAPL, JPM, ZC=F
 - **Persistent top signals:** ZW=F (6 reports), META (2 reports)
 - **Dropped from top-5:** ZS=F, ^FCHI, ^FTSE

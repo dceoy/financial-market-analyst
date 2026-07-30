@@ -30,6 +30,7 @@ _No scheduled events for covered instruments in the next 7 days._
 ## Signal History
 
 Compared with the previous available report (**2026-07-04**).
+
 - **New top-5:** None
 - **Persistent top signals:** ^DJI (6 reports), ^GDAXI (6 reports), AAPL (2 reports), UNH (2 reports), ^STOXX50E (2 reports)
 - **Dropped from top-5:** None
