@@ -14,8 +14,9 @@ uv run python .agents/skills/update-cfd-instruments/scripts/validate_cfd_instrum
 	--input data/cfd_instruments.csv \
 	--schema data/schema/cfd_instruments.schema.json
 
-# Markdown
-npx -y prettier --write './**/*.{md,json}'
+# Markdown (JSON is excluded: Prettier rewrites alter SHA-256 hashes used by
+# qualitative input verification for analysis/evidence fixtures and artifacts.)
+npx -y prettier --write './**/*.md'
 
 # OKF knowledge shadow content
 uv run python tools/okf_hugo_adapter.py --src okf --dst content/knowledge --check
