@@ -4,6 +4,7 @@ set -euxo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 # Python
+uv sync
 uv run ruff format .
 uv run ruff check --fix .
 uv run pyright .
