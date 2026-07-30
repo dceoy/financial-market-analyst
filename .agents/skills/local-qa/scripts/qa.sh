@@ -12,8 +12,8 @@ uv run pytest
 
 # Validate CFD instruments CSV
 uv run python .agents/skills/update-cfd-instruments/scripts/validate_cfd_instruments.py \
-	--input data/cfd_instruments.csv \
-	--schema data/schema/cfd_instruments.schema.json
+  --input data/cfd_instruments.csv \
+  --schema data/schema/cfd_instruments.schema.json
 
 # Markdown (JSON is excluded: Prettier rewrites alter SHA-256 hashes used by
 # qualitative input verification for analysis/evidence fixtures and artifacts.)
@@ -26,7 +26,8 @@ uv run python tools/okf_hugo_adapter.py --src okf --dst content/knowledge --chec
 hugo --gc --minify
 
 # Shell scripts
-git ls-files -z -- '*.sh' '*.bash' '*.bats' | xargs -0 -t shfmt --write
+git ls-files -z -- '*.sh' '*.bash' '*.bats' \
+  | xargs -0 -t shfmt --write --indent=2 --binary-next-line --case-indent --space-redirects
 git ls-files -z -- '*.sh' '*.bash' '*.bats' | xargs -0 -t shellcheck
 
 # GitHub Actions
