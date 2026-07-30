@@ -35,6 +35,7 @@ Scheduled events within the next 7 days for covered instruments (from `data/cale
 ## Signal History
 
 Compared with the previous available report (**2026-07-12**).
+
 - **New top-5:** ^DJI
 - **Persistent top signals:** ZS=F (7 reports), JPM (4 reports), META (3 reports), ZW=F (3 reports)
 - **Dropped from top-5:** ZC=F

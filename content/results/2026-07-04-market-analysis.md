@@ -26,6 +26,7 @@ git_commit = "a3e7e8c"
 ## Signal History
 
 Compared with the previous available report (**2026-07-02**).
+
 - **Universe change:** 5 → 33 instruments; percentile-based scores and deltas are not directly comparable across this change.
 - **New top-5:** AAPL, UNH, ^STOXX50E
 - **Persistent top signals:** ^DJI (5 reports), ^GDAXI (5 reports)

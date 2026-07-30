@@ -30,6 +30,7 @@ _No scheduled events for covered instruments in the next 7 days._
 ## Signal History
 
 Compared with the previous available report (**2026-07-06**).
+
 - **New top-5:** 8306.T, JPM, ZS=F
 - **Persistent top signals:** ^GDAXI (8 reports), AAPL (4 reports)
 - **Dropped from top-5:** UNH, ^DJI, ^STOXX50E
