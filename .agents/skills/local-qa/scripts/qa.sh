@@ -15,8 +15,7 @@ uv run python .agents/skills/update-cfd-instruments/scripts/validate_cfd_instrum
   --input data/cfd_instruments.csv \
   --schema data/schema/cfd_instruments.schema.json
 
-# Markdown (JSON is excluded: Prettier rewrites alter SHA-256 hashes used by
-# qualitative input verification for analysis/evidence fixtures and artifacts.)
+# Markdown
 npx -y prettier --write './**/*.md'
 
 # OKF knowledge shadow content
@@ -28,10 +27,13 @@ hugo --gc --minify
 # Shell scripts
 git ls-files -z -- '*.sh' '*.bash' '*.bats' \
   | xargs -0 -t shfmt --write --indent=2 --binary-next-line --case-indent --space-redirects
-git ls-files -z -- '*.sh' '*.bash' '*.bats' | xargs -0 -t shellcheck
+git ls-files -z -- '*.sh' '*.bash' '*.bats' \
+  | xargs -0 -t shellcheck
 
 # GitHub Actions
 zizmor --fix=safe .github/workflows
-git ls-files -z -- '.github/workflows/*.yml' '.github/workflows/*.yaml' | xargs -0 -t actionlint
-git ls-files -z -- '.github/workflows/*.yml' '.github/workflows/*.yaml' | xargs -0 -t yamllint -d '{"extends": "relaxed", "rules": {"line-length": "disable"}}'
+git ls-files -z -- '.github/workflows/*.yml' '.github/workflows/*.yaml' \
+  | xargs -0 -t actionlint
+git ls-files -z -- '.github/workflows/*.yml' '.github/workflows/*.yaml' \
+  | xargs -0 -t yamllint -d '{"extends": "relaxed", "rules": {"line-length": "disable"}}'
 checkov --framework=all --output=github_failed_only --directory=.
