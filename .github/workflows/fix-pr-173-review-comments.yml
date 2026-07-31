@@ -1,5 +1,6 @@
 ---
 name: Fix PR 173 review comments
+# Second push triggers the registered one-shot workflow.
 on:
   push:
     branches:
