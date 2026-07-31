@@ -1,0 +1,53 @@
+---
+name: Fix PR 173 source revision
+on:
+  pull_request:
+    branches:
+      - chatgpt/pr-173-source-fix-base
+    types:
+      - opened
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  fix:
+    if: github.event.pull_request.head.ref == 'chatgpt/pr-173-source-fix-trigger'
+    runs-on: ubuntu-latest
+    env:
+      HEAD_BRANCH: dependabot/github_actions/anthropics/claude-code-action-1.0.182
+      FIX_BASE: chatgpt/pr-173-source-fix-base
+      FIX_TRIGGER: chatgpt/pr-173-source-fix-trigger
+      FIX_PR: ${{ github.event.pull_request.number }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout PR 173 branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: dependabot/github_actions/anthropics/claude-code-action-1.0.182
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Synchronize source revision
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/aims/qualitative.py')
+          text = path.read_text(encoding='utf-8')
+          old = 'CLAUDE_ACTION_REVISION: Final[str] = "e90deca47693f9457b72f2b53c17d7c445a87342"'
+          new = 'CLAUDE_ACTION_REVISION: Final[str] = "e0cf66d1d257526b5d07f141838c338921cb8455"'
+          count = text.count(old)
+          if count != 1:
+              raise SystemExit(f'expected one old revision, found {count}')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/aims/qualitative.py
+          git commit -m 'fix(qualitative): sync Claude action revision'
+          git push origin "HEAD:${HEAD_BRANCH}"
+      - name: Clean up temporary resources
+        run: |
+          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/pulls/${FIX_PR}" -f state=closed >/dev/null
+          git push origin --delete "${FIX_TRIGGER}"
+          git push origin --delete "${FIX_BASE}"
