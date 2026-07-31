@@ -421,7 +421,7 @@ GitHub Pages deployment is handled by `ci.yml` (`hugo-deploy-to-gh-pages` job), 
 - `workflow_run` on "Daily market analysis" completion: bot merges performed with `GITHUB_TOKEN` create no push event, so the daily workflow finishing (successfully) re-runs CI/CD against the head of `main` and deploys it. Deploys are idempotent snapshots of `main`, so a redundant run after a dry run is harmless.
 - `workflow_dispatch` (`gh workflow run ci.yml`): manual full CI + deploy of current `main` — the recovery path when a deploy failed or the site is stale.
 
-The deploy job builds the site with Hugo, uploads it as a Pages artifact, and deploys via `actions/deploy-pages`. Pages deployments fail transiently ("Deployment failed, try again later."); the job retries the deploy once in-run. If the job still fails, a Slack failure notification fires when `SLACK_WEBHOOK_URL` is configured — otherwise check the run under the Actions tab and the deployment status via `gh api repos/<owner>/<repo>/deployments?environment=github-pages`.
+The AIMS-specific prerequisite job validates the OKF shadow content and builds the site with Hugo, then uploads the generated `site/` directory as a Pages artifact. Deployment is delegated to the pinned `dceoy/gha-for-devops` `github-pages-deploy.yml` reusable workflow, which performs the deployment and one bounded in-run retry. If the deployment still fails, the local AIMS follow-up job sends a Slack failure notification when `SLACK_WEBHOOK_URL` is configured — otherwise check the run under the Actions tab and the deployment status via `gh api repos/<owner>/<repo>/deployments?environment=github-pages`.
 
 ### Rollback
 
