@@ -29,7 +29,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: ${{ github.event_name == 'pull_request' && format('hugo-pr-{0}', github.run_id) || 'github-pages-build' }}
+  group: ${{ github.event_name == 'pull_request' && format('hugo-pr-{0}', github.run_id) || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success') && format('hugo-workflow-run-skip-{0}', github.run_id) || 'github-pages-build' }}
   cancel-in-progress: ${{ github.event_name != 'pull_request' }}
 jobs:
   github-actions-lint-and-scan:
