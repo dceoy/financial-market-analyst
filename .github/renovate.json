@@ -2,7 +2,27 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "minimumReleaseAge": "7 days",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update the Claude Code Action revision used in provenance metadata",
+      "managerFilePatterns": ["/^src/aims/qualitative\\.py$/"],
+      "matchStrings": [
+        "CLAUDE_ACTION_REVISION: Final\\[str\\] = \"(?<currentDigest>[a-f0-9]{40})\""
+      ],
+      "currentValueTemplate": "v1",
+      "depNameTemplate": "anthropics/claude-code-action",
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "docker",
+      "autoReplaceStringTemplate": "CLAUDE_ACTION_REVISION: Final[str] = \"{{{newDigest}}}\""
+    }
+  ],
   "packageRules": [
+    {
+      "description": "Group Claude Code Action references",
+      "matchPackageNames": ["anthropics/claude-code-action"],
+      "groupName": "Claude Code Action"
+    },
     {
       "description": "Automatically merge minor and patch-level updates",
       "matchUpdateTypes": ["minor", "patch", "digest"],
