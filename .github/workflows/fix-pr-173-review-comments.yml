@@ -5,20 +5,27 @@ on:
     branches:
       - chatgpt/pr-173-fix-base
     types:
-      - closed
+      - opened
 permissions:
   contents: write
+  pull-requests: write
 jobs:
   cleanup:
-    if: github.event.pull_request.head.ref == 'chatgpt/pr-173-trigger'
+    if: github.event.pull_request.head.ref == 'chatgpt/pr-173-cleanup-trigger'
     runs-on: ubuntu-latest
+    env:
+      CLEANUP_PR: ${{ github.event.pull_request.number }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
           persist-credentials: true
+      - name: Close temporary pull request
+        run: gh api --method PATCH "repos/${GITHUB_REPOSITORY}/pulls/${CLEANUP_PR}" -f state=closed >/dev/null
       - name: Delete temporary branches
         run: |
           git push origin --delete chatgpt/pr-173-trigger
+          git push origin --delete chatgpt/pr-173-cleanup-trigger
           git push origin --delete chatgpt/pr-173-fix-base
