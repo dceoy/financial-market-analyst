@@ -1,64 +1,24 @@
 ---
-name: Fix PR 173 review comments
+name: Clean up PR 173 review fix
 on:
   pull_request:
     branches:
       - chatgpt/pr-173-fix-base
     types:
-      - opened
+      - closed
 permissions:
   contents: write
-  pull-requests: write
 jobs:
-  fix:
+  cleanup:
     if: github.event.pull_request.head.ref == 'chatgpt/pr-173-trigger'
     runs-on: ubuntu-latest
-    env:
-      HEAD_BRANCH: dependabot/github_actions/anthropics/claude-code-action-1.0.182
-      FIX_BRANCH: chatgpt/pr-173-fix-base
-      TRIGGER_BRANCH: chatgpt/pr-173-trigger
-      TRIGGER_PR: ${{ github.event.pull_request.number }}
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Checkout current main
+      - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
-          fetch-depth: 0
           persist-credentials: true
-      - name: Rebuild the dependency branch
+      - name: Delete temporary branches
         run: |
-          git fetch origin "${HEAD_BRANCH}"
-          git checkout -B "${HEAD_BRANCH}" origin/main
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path('.github/workflows/daily-market-analysis.yml')
-          text = path.read_text(encoding='utf-8')
-          old = 'uses: anthropics/claude-code-action@e90deca47693f9457b72f2b53c17d7c445a87342 # v1\n'
-          new = 'uses: anthropics/claude-code-action@e0cf66d1d257526b5d07f141838c338921cb8455 # v1.0.182\n'
-          count = text.count(old)
-          if count != 2:
-              raise SystemExit(f'expected 2 matching action references, found {count}')
-          path.write_text(text.replace(old, new), encoding='utf-8')
-          PY
-          git diff --check
-      - name: Audit the updated workflow
-        uses: zizmorcore/zizmor-action@6fc4b006235f201fdab3722e17240ab420d580e5 # v0.6.1
-        with:
-          inputs: .github/workflows/daily-market-analysis.yml
-          online-audits: true
-          persona: regular
-          token: ${{ secrets.GITHUB_TOKEN }}
-          advanced-security: false
-          annotations: true
-      - name: Commit and clean up
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/workflows/daily-market-analysis.yml
-          git commit -m 'build(deps): bump anthropics/claude-code-action to 1.0.182'
-          git push --force origin "HEAD:${HEAD_BRANCH}"
-          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/pulls/${TRIGGER_PR}" -f state=closed >/dev/null
-          git push origin --delete "${TRIGGER_BRANCH}"
-          git push origin --delete "${FIX_BRANCH}"
+          git push origin --delete chatgpt/pr-173-trigger
+          git push origin --delete chatgpt/pr-173-fix-base
