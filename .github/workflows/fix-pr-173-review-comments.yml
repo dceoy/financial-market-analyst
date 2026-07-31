@@ -1,18 +1,24 @@
 ---
 name: Fix PR 173 review comments
-# Second push triggers the registered one-shot workflow.
 on:
-  push:
+  pull_request:
     branches:
       - chatgpt/pr-173-fix-base
+    types:
+      - opened
 permissions:
   contents: write
+  pull-requests: write
 jobs:
   fix:
+    if: github.event.pull_request.head.ref == 'chatgpt/pr-173-trigger'
     runs-on: ubuntu-latest
     env:
       HEAD_BRANCH: dependabot/github_actions/anthropics/claude-code-action-1.0.182
       FIX_BRANCH: chatgpt/pr-173-fix-base
+      TRIGGER_BRANCH: chatgpt/pr-173-trigger
+      TRIGGER_PR: ${{ github.event.pull_request.number }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout current main
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -53,4 +59,6 @@ jobs:
           git add .github/workflows/daily-market-analysis.yml
           git commit -m 'build(deps): bump anthropics/claude-code-action to 1.0.182'
           git push --force origin "HEAD:${HEAD_BRANCH}"
+          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/pulls/${TRIGGER_PR}" -f state=closed >/dev/null
+          git push origin --delete "${TRIGGER_BRANCH}"
           git push origin --delete "${FIX_BRANCH}"
