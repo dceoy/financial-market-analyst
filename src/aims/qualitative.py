@@ -27,7 +27,7 @@ from aims.validate_qualitative import (
 
 MODEL_ID: Final[str] = "claude-opus-4-8"
 PROMPT_VERSION: Final[str] = "1.0.0"
-CLAUDE_ACTION_REVISION: Final[str] = "e90deca47693f9457b72f2b53c17d7c445a87342"
+CLAUDE_ACTION_REVISION: Final[str] = "e0cf66d1d257526b5d07f141838c338921cb8455"
 EXECUTION_TYPE: Final[str] = "claude-code-action-oauth"
 DEFAULT_PROMPT_PATH: Final[Path] = Path(
     ".agents/skills/qualitative-analysis/prompts/qualitative_v1.md"
