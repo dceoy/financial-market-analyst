@@ -28,6 +28,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('hugo-pr-{0}', github.run_id) || 'github-pages-build' }}
+  cancel-in-progress: false
 jobs:
   github-actions-lint-and-scan:
     if: >
@@ -94,9 +97,6 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.event_name == 'pull_request' && format('hugo-pr-{0}', github.run_id) || 'github-pages-build' }}
-      cancel-in-progress: false
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0   # v7.0.0
         with:
