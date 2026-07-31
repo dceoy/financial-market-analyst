@@ -12,8 +12,7 @@
       ],
       "currentValueTemplate": "v1",
       "depNameTemplate": "anthropics/claude-code-action",
-      "datasourceTemplate": "github-tags",
-      "versioningTemplate": "docker",
+      "datasourceTemplate": "github-digest",
       "autoReplaceStringTemplate": "CLAUDE_ACTION_REVISION: Final[str] = \"{{{newDigest}}}\""
     }
   ],
