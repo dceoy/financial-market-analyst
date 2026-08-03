@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "as_of": "2026-08-02",
+    "as_of": "2026-08-03",
     "config": {
       "horizons": [
         1,
@@ -11,8 +11,8 @@
       "top_k": 5
     },
     "disclaimer": "Informational association only. These figures measure whether the published top-5 quantitative signals outperformed a naive equal-weight basket of the same day's reliable universe in committed data; they are not an investable or executable track record, exclude fees, slippage, financing, and order timing, rest on small overlapping samples, and are not investment advice.",
-    "generated_at": "2026-08-02T00:00:00+00:00",
-    "git_commit": "f7bb0ea",
+    "generated_at": "2026-08-03T00:00:00+00:00",
+    "git_commit": "b12ac0a",
     "inputs": {
       "analysis_dates": [
         "2026-06-29",
@@ -48,15 +48,16 @@
         "2026-07-30",
         "2026-07-31",
         "2026-08-01",
-        "2026-08-02"
+        "2026-08-02",
+        "2026-08-03"
       ]
     }
   },
   "signal_evaluation": {
-    "dates_evaluated": 34,
+    "dates_evaluated": 35,
     "horizons": {
       "1d": {
-        "benchmark_average_return": 0.001367,
+        "benchmark_average_return": 0.001224,
         "by_asset_class": {
           "commodity": {
             "benchmark_average_return": -0.001387,
@@ -66,16 +67,16 @@
             "top5_average_return": -0.002274
           },
           "equity": {
-            "benchmark_average_return": 0.002377,
+            "benchmark_average_return": 0.002079,
             "count": 34,
-            "excess_return": -0.005524,
+            "excess_return": -0.005226,
             "hit_rate": 0.470588,
             "top5_average_return": -0.003147
           },
           "equity_index": {
-            "benchmark_average_return": 0.004498,
+            "benchmark_average_return": 0.004204,
             "count": 23,
-            "excess_return": -0.002693,
+            "excess_return": -0.002399,
             "hit_rate": 0.391304,
             "top5_average_return": 0.001804
           },
@@ -103,9 +104,9 @@
             "top5_average_return": 0.004131
           },
           "Neutral": {
-            "benchmark_average_return": 0.001769,
+            "benchmark_average_return": 0.001483,
             "count": 59,
-            "excess_return": -0.004314,
+            "excess_return": -0.004027,
             "hit_rate": 0.423729,
             "top5_average_return": -0.002544
           },
@@ -118,10 +119,10 @@
           }
         },
         "count": 118,
-        "excess_return": -0.002485,
+        "excess_return": -0.002342,
         "hit_rate": 0.466102,
         "incomplete": 42,
-        "pending": 10,
+        "pending": 15,
         "top5_average_return": -0.001118
       },
       "20d": {
@@ -132,30 +133,30 @@
         "excess_return": null,
         "hit_rate": null,
         "incomplete": 29,
-        "pending": 141,
+        "pending": 146,
         "top5_average_return": null
       },
       "5d": {
-        "benchmark_average_return": 0.00533,
+        "benchmark_average_return": 0.004519,
         "by_asset_class": {
           "commodity": {
-            "benchmark_average_return": 0.007219,
+            "benchmark_average_return": 0.006565,
             "count": 48,
-            "excess_return": -0.005152,
-            "hit_rate": 0.416667,
-            "top5_average_return": 0.002067
+            "excess_return": -0.008404,
+            "hit_rate": 0.395833,
+            "top5_average_return": -0.001839
           },
           "equity": {
-            "benchmark_average_return": 0.002508,
+            "benchmark_average_return": 0.001688,
             "count": 16,
-            "excess_return": -0.017011,
+            "excess_return": -0.016191,
             "hit_rate": 0.4375,
             "top5_average_return": -0.014503
           },
           "equity_index": {
-            "benchmark_average_return": -0.001108,
+            "benchmark_average_return": -0.004859,
             "count": 5,
-            "excess_return": 0.01637,
+            "excess_return": 0.020121,
             "hit_rate": 1.0,
             "top5_average_return": 0.015262
           },
@@ -169,11 +170,11 @@
         },
         "by_regime": {
           "Bearish": {
-            "benchmark_average_return": 0.005911,
+            "benchmark_average_return": 0.003723,
             "count": 15,
-            "excess_return": -0.037541,
+            "excess_return": -0.043686,
             "hit_rate": 0.2,
-            "top5_average_return": -0.031629
+            "top5_average_return": -0.039963
           },
           "Bullish": {
             "benchmark_average_return": -0.016163,
@@ -183,11 +184,11 @@
             "top5_average_return": -0.011825
           },
           "Neutral": {
-            "benchmark_average_return": 0.011184,
+            "benchmark_average_return": 0.010403,
             "count": 39,
-            "excess_return": 0.001744,
-            "hit_rate": 0.564103,
-            "top5_average_return": 0.012928
+            "excess_return": 0.000923,
+            "hit_rate": 0.538462,
+            "top5_average_return": 0.011325
           },
           "Unavailable": {
             "benchmark_average_return": 0.009185,
@@ -198,11 +199,11 @@
           }
         },
         "count": 78,
-        "excess_return": -0.005611,
-        "hit_rate": 0.487179,
+        "excess_return": -0.007203,
+        "hit_rate": 0.474359,
         "incomplete": 62,
-        "pending": 30,
-        "top5_average_return": -0.00028
+        "pending": 35,
+        "top5_average_return": -0.002684
       }
     }
   },
