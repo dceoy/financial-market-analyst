@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "as_of": "2026-08-08",
+    "as_of": "2026-08-09",
     "config": {
       "horizons": [
         1,
@@ -11,8 +11,8 @@
       "top_k": 5
     },
     "disclaimer": "Informational association only. These figures measure whether the published top-5 quantitative signals outperformed a naive equal-weight basket of the same day's reliable universe in committed data; they are not an investable or executable track record, exclude fees, slippage, financing, and order timing, rest on small overlapping samples, and are not investment advice.",
-    "generated_at": "2026-08-08T00:00:00+00:00",
-    "git_commit": "22049e2",
+    "generated_at": "2026-08-09T00:00:00+00:00",
+    "git_commit": "e01a341",
     "inputs": {
       "analysis_dates": [
         "2026-06-29",
@@ -54,12 +54,13 @@
         "2026-08-05",
         "2026-08-06",
         "2026-08-07",
-        "2026-08-08"
+        "2026-08-08",
+        "2026-08-09"
       ]
     }
   },
   "signal_evaluation": {
-    "dates_evaluated": 40,
+    "dates_evaluated": 41,
     "horizons": {
       "1d": {
         "benchmark_average_return": 0.000819,
@@ -127,7 +128,7 @@
         "excess_return": -0.001214,
         "hit_rate": 0.485149,
         "incomplete": 94,
-        "pending": 5,
+        "pending": 10,
         "top5_average_return": -0.000394
       },
       "20d": {
@@ -154,7 +155,7 @@
         "excess_return": 0.008899,
         "hit_rate": 1.0,
         "incomplete": 69,
-        "pending": 130,
+        "pending": 135,
         "top5_average_return": 0.029674
       },
       "5d": {
@@ -216,7 +217,7 @@
         "excess_return": 0.003909,
         "hit_rate": 0.584906,
         "incomplete": 119,
-        "pending": 28,
+        "pending": 33,
         "top5_average_return": 0.013267
       }
     }
@@ -507,29 +508,36 @@
     "2026-08-07: ^STOXX50E: broken bar chain within 1d forward window",
     "AAPL: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "AMZN: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
+    "BZ=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
     "CL=F: conflicting ret_1d for bar 2026-07-17 across analysis artifacts; keeping the latest value",
+    "CL=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
     "GC=F: conflicting ret_1d for bar 2026-07-10 across analysis artifacts; keeping the latest value",
     "GC=F: conflicting ret_1d for bar 2026-07-17 across analysis artifacts; keeping the latest value",
     "GC=F: conflicting ret_1d for bar 2026-07-31 across analysis artifacts; keeping the latest value",
+    "GC=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
     "GOOGL: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "HG=F: conflicting ret_1d for bar 2026-07-10 across analysis artifacts; keeping the latest value",
     "HG=F: conflicting ret_1d for bar 2026-07-17 across analysis artifacts; keeping the latest value",
     "HG=F: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "HG=F: conflicting ret_1d for bar 2026-07-31 across analysis artifacts; keeping the latest value",
+    "HG=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
     "JPM: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "META: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "MSFT: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "NG=F: conflicting ret_1d for bar 2026-07-17 across analysis artifacts; keeping the latest value",
     "NG=F: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
+    "NG=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
     "NVDA: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "PL=F: conflicting ret_1d for bar 2026-07-10 across analysis artifacts; keeping the latest value",
     "PL=F: conflicting ret_1d for bar 2026-07-17 across analysis artifacts; keeping the latest value",
     "PL=F: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "PL=F: conflicting ret_1d for bar 2026-07-31 across analysis artifacts; keeping the latest value",
+    "PL=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
     "SI=F: conflicting ret_1d for bar 2026-07-10 across analysis artifacts; keeping the latest value",
     "SI=F: conflicting ret_1d for bar 2026-07-17 across analysis artifacts; keeping the latest value",
     "SI=F: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "SI=F: conflicting ret_1d for bar 2026-07-31 across analysis artifacts; keeping the latest value",
+    "SI=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
     "TSLA: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "UNH: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "XOM: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
@@ -538,14 +546,17 @@
     "ZC=F: conflicting ret_1d for bar 2026-07-17 across analysis artifacts; keeping the latest value",
     "ZC=F: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "ZC=F: conflicting ret_1d for bar 2026-07-31 across analysis artifacts; keeping the latest value",
+    "ZC=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
     "ZS=F: conflicting ret_1d for bar 2026-07-02 across analysis artifacts; keeping the latest value",
     "ZS=F: conflicting ret_1d for bar 2026-07-10 across analysis artifacts; keeping the latest value",
     "ZS=F: conflicting ret_1d for bar 2026-07-17 across analysis artifacts; keeping the latest value",
     "ZS=F: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "ZS=F: conflicting ret_1d for bar 2026-07-31 across analysis artifacts; keeping the latest value",
+    "ZS=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
     "ZW=F: conflicting ret_1d for bar 2026-07-02 across analysis artifacts; keeping the latest value",
     "ZW=F: conflicting ret_1d for bar 2026-07-10 across analysis artifacts; keeping the latest value",
     "ZW=F: conflicting ret_1d for bar 2026-07-17 across analysis artifacts; keeping the latest value",
+    "ZW=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
     "^DJI: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "^GSPC: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "^NDX: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value"
