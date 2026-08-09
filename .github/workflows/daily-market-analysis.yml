@@ -3,7 +3,7 @@ name: Daily market analysis
 # checkov:skip=CKV_GHA_7: inputs are analysis params (date/interval/dry_run) for authorised manual backfills
 on:
   schedule:
-    - cron: "0 1 * * *"
+    - cron: "0 1 * * 1-5"
   workflow_dispatch:
     inputs:
       analysis_date:
