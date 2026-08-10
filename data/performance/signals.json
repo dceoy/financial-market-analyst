@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "as_of": "2026-08-09",
+    "as_of": "2026-08-10",
     "config": {
       "horizons": [
         1,
@@ -11,8 +11,8 @@
       "top_k": 5
     },
     "disclaimer": "Informational association only. These figures measure whether the published top-5 quantitative signals outperformed a naive equal-weight basket of the same day's reliable universe in committed data; they are not an investable or executable track record, exclude fees, slippage, financing, and order timing, rest on small overlapping samples, and are not investment advice.",
-    "generated_at": "2026-08-09T00:00:00+00:00",
-    "git_commit": "e01a341",
+    "generated_at": "2026-08-10T00:00:00+00:00",
+    "git_commit": "12b5471",
     "inputs": {
       "analysis_dates": [
         "2026-06-29",
@@ -55,12 +55,13 @@
         "2026-08-06",
         "2026-08-07",
         "2026-08-08",
-        "2026-08-09"
+        "2026-08-09",
+        "2026-08-10"
       ]
     }
   },
   "signal_evaluation": {
-    "dates_evaluated": 41,
+    "dates_evaluated": 42,
     "horizons": {
       "1d": {
         "benchmark_average_return": 0.000819,
@@ -127,8 +128,8 @@
         "count": 101,
         "excess_return": -0.001214,
         "hit_rate": 0.485149,
-        "incomplete": 94,
-        "pending": 10,
+        "incomplete": 96,
+        "pending": 13,
         "top5_average_return": -0.000394
       },
       "20d": {
@@ -154,8 +155,8 @@
         "count": 1,
         "excess_return": 0.008899,
         "hit_rate": 1.0,
-        "incomplete": 69,
-        "pending": 135,
+        "incomplete": 71,
+        "pending": 138,
         "top5_average_return": 0.029674
       },
       "5d": {
@@ -216,8 +217,8 @@
         "count": 53,
         "excess_return": 0.003909,
         "hit_rate": 0.584906,
-        "incomplete": 119,
-        "pending": 33,
+        "incomplete": 120,
+        "pending": 37,
         "top5_average_return": 0.013267
       }
     }
@@ -367,6 +368,8 @@
     "2026-07-14: AAPL: broken bar chain within 5d forward window",
     "2026-07-14: UNH: broken bar chain within 1d forward window",
     "2026-07-14: UNH: broken bar chain within 5d forward window",
+    "2026-07-14: ZS=F: broken bar chain within 20d forward window",
+    "2026-07-14: ZW=F: broken bar chain within 20d forward window",
     "2026-07-14: ^DJI: broken bar chain within 1d forward window",
     "2026-07-14: ^DJI: broken bar chain within 5d forward window",
     "2026-07-15: ^FCHI: broken bar chain within 1d forward window",
@@ -487,6 +490,7 @@
     "2026-08-03: ^HSI: broken bar chain within 1d forward window",
     "2026-08-03: ^HSI: broken bar chain within 5d forward window",
     "2026-08-04: ZC=F: broken bar chain within 1d forward window",
+    "2026-08-04: ZC=F: broken bar chain within 5d forward window",
     "2026-08-04: ^FCHI: broken bar chain within 1d forward window",
     "2026-08-04: ^FTSE: broken bar chain within 1d forward window",
     "2026-08-04: ^GDAXI: broken bar chain within 1d forward window",
@@ -506,6 +510,8 @@
     "2026-08-07: ^FCHI: broken bar chain within 1d forward window",
     "2026-08-07: ^GDAXI: broken bar chain within 1d forward window",
     "2026-08-07: ^STOXX50E: broken bar chain within 1d forward window",
+    "2026-08-08: GC=F: broken bar chain within 1d forward window",
+    "2026-08-09: GC=F: broken bar chain within 1d forward window",
     "AAPL: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "AMZN: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "BZ=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
