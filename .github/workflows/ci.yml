@@ -48,6 +48,14 @@ jobs:
       search-path: .github/workflows
       go-version: stable
       python-version: 3.x
+  markdown-lint:
+    if: >
+      github.event_name == 'push'
+      || github.event_name == 'pull_request'
+      || github.event_name == 'workflow_dispatch'
+      || (github.event_name == 'workflow_run'
+      && github.event.workflow_run.conclusion == 'success')
+    uses: dceoy/gha-for-devops/.github/workflows/markdown-lint.yml@main  # zizmor: ignore[unpinned-uses]
   python-lint-and-scan:
     if: >
       github.event_name == 'push'
@@ -167,6 +175,7 @@ jobs:
       && github.event.workflow_run.conclusion == 'success')
     needs:
       - github-actions-lint-and-scan
+      - markdown-lint
       - python-lint-and-scan
       - python-test
       - okf-hugo-build
