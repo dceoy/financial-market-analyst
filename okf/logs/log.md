@@ -1,3 +1,5 @@
+<!-- markdownlint-disable-next-line MD025 -->
+
 # AIMS OKF Log
 
 ## 2026-07-27

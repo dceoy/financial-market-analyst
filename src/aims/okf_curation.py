@@ -358,7 +358,7 @@ def _candidate_section(candidates: list[ThemeCluster], generated_at: str) -> lis
             for occurrence in cluster.occurrences
         )
         lines.extend(("", "Draft concept skeleton (edit before committing):", ""))
-        lines.extend(("```", concept_skeleton(cluster, generated_at), "```", ""))
+        lines.extend(("```text", concept_skeleton(cluster, generated_at), "```", ""))
     return lines[:-1] if not lines[-1] else lines
 
 

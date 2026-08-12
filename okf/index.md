@@ -2,6 +2,8 @@
 okf_version: "0.2"
 ---
 
+<!-- markdownlint-disable-next-line MD025 -->
+
 # AIMS Knowledge Base
 
 The `okf/` tree is the canonical repository-native source for durable AIMS architecture, operations, and methodology knowledge. Hugo pages under `content/knowledge/` are generated shadow content and must not be hand-edited.
