@@ -66,21 +66,36 @@ jobs:
                       in_fence = True
 
               path.write_text("\n".join(lines) + "\n")
+
+          report_path = Path("src/aims/reports.py")
+          report_text = report_path.read_text()
+          old = 'refs += f"[{numbers[key]}]"'
+          new = 'refs += f"\\\\[{numbers[key]}\\\\]"'
+          if old in report_text:
+              report_path.write_text(report_text.replace(old, new))
+
+          for name in (
+              "tests/golden/2024-01-01-market-analysis-partially-gated.md",
+              "tests/golden/2024-01-01-market-analysis-with-qualitative.md",
+          ):
+              path = Path(name)
+              text = path.read_text()
+              text = text.replace("[1][2]", r"\[1\]\[2\]")
+              text = text.replace("[2][1]", r"\[2\]\[1\]")
+              path.write_text(text)
           PY
           config_file="${RUNNER_TEMP}/markdownlint-cli2.jsonc"
           printf '{"config":{"MD013":false}}' > "${config_file}"
-          set +e
           git ls-files -z -- '*.md' '*.markdown' \
             | xargs -0 -r npx -y markdownlint-cli2@0.23.2 --fix --config "${config_file}" --
-          set -e
           npx -y prettier@3.9.6 --write './**/*.{md,markdown,mdx}'
       - name: Commit Markdown fixes
         run: |
-          if [[ -z "$(git status --porcelain -- '*.md' '*.markdown' '*.mdx')" ]]; then
+          if [[ -z "$(git status --porcelain -- '*.md' src/aims/reports.py)" ]]; then
             exit 0
           fi
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -- '*.md' '*.markdown' '*.mdx'
+          git add -- '*.md' src/aims/reports.py
           git commit -m 'Fix Markdown lint issues'
           git push
