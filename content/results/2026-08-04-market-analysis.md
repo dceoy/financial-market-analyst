@@ -30,6 +30,7 @@ _No scheduled events for covered instruments in the next 7 days._
 ## Signal History
 
 Compared with the previous available report (**2026-08-03**).
+
 - **New top-5:** ZC=F, ^FCHI, ^GDAXI
 - **Persistent top signals:** ^FTSE (11 reports), ^HSI (6 reports)
 - **Dropped from top-5:** AMZN, JPM, MSFT

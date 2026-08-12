@@ -34,11 +34,11 @@ Scheduled events within the next 7 days for covered instruments (from `data/cale
 
 > **AI-generated section.** Produced by `claude-opus-4-8` (prompt v1.0.0) from the committed evidence bundle and quantitative artifact, after schema validation and deterministic consistency gates. It does not modify the scores, ranks, risk gates, or market regime above, and it is not investment advice — see the Disclaimer section below.
 
-The cited coverage points to a broad year-end rally supported by a steady policy stance, which is consistent with equity indices leading the rankings. Nothing in the cited items contradicts the top-ranked signals. [1][2]
+The cited coverage points to a broad year-end rally supported by a steady policy stance, which is consistent with equity indices leading the rankings. Nothing in the cited items contradicts the top-ranked signals. [1], [2]
 
 **Recurring themes:**
 
-- Year-end equity rally on rate-pause hopes [2][1]
+- Year-end equity rally on rate-pause hopes [2], [1]
 
 ### S&P 500 / ^SPX — supportive (confidence: medium)
 

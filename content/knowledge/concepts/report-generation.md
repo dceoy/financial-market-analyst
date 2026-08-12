@@ -28,7 +28,7 @@ title: Report Generation
 type: knowledge
 ---
 
-# Report Generation
+## Report Generation
 
 How deterministic JSON analysis artifacts become public Hugo market analysis reports.
 

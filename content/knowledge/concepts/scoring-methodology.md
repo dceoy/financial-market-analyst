@@ -27,7 +27,7 @@ title: Scoring Methodology
 type: knowledge
 ---
 
-# Scoring Methodology
+## Scoring Methodology
 
 How AIMS treats analysis artifacts, score semantics, ranking outputs, and risk gates as generated numeric facts.
 

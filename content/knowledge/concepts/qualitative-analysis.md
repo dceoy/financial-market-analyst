@@ -24,7 +24,7 @@ title: Qualitative Analysis
 type: knowledge
 ---
 
-# Qualitative Analysis
+## Qualitative Analysis
 
 How the AI qualitative layer adds grounded, citation-bound interpretation around the quantitative signal without becoming a source of numeric truth.
 

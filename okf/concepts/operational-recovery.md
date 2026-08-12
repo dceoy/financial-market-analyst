@@ -17,7 +17,7 @@ sources:
     title: Local QA skill
 ---
 
-# Operational Recovery
+## Operational Recovery
 
 Runbook-oriented knowledge for restoring AIMS analysis, validation, and publication workflows.
 

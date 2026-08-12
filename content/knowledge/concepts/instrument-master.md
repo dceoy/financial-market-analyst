@@ -28,7 +28,7 @@ title: Instrument Master
 type: knowledge
 ---
 
-# Instrument Master
+## Instrument Master
 
 Canonical CFD instrument reference data and validation responsibilities in AIMS.
 

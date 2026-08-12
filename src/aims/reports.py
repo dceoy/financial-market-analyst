@@ -339,13 +339,13 @@ def _qualitative_withheld(qualitative: dict[str, Any]) -> bool:
 
 
 def _citation_refs(citations: list[Any], numbers: dict[str, int]) -> str:
-    refs = ""
+    refs: list[str] = []
     for cid in citations:
         key = str(cid)
         if key not in numbers:
             numbers[key] = len(numbers) + 1
-        refs += f"[{numbers[key]}]"
-    return refs
+        refs.append(f"[{numbers[key]}]")
+    return ", ".join(refs)
 
 
 def _section_ai_commentary(

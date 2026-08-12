@@ -25,7 +25,7 @@ title: AIMS Architecture
 type: knowledge
 ---
 
-# AIMS Architecture
+## AIMS Architecture
 
 Repository-level architecture for the AIMS analysis pipeline, Hugo site, OKF source, and generated knowledge pages.
 

@@ -20,7 +20,7 @@ sources:
     title: CFD instrument update skill
 ---
 
-# Instrument Master
+## Instrument Master
 
 Canonical CFD instrument reference data and validation responsibilities in AIMS.
 

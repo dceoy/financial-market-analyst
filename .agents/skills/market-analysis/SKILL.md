@@ -101,7 +101,7 @@ uv run .agents/skills/market-analysis/scripts/notify_slack.py \
 
 ## Data layout
 
-```
+```text
 data/
 ├── prices/
 │   ├── AAPL.US_d.csv        # Daily OHLCV for AAPL.US

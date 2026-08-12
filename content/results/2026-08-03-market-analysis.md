@@ -34,6 +34,7 @@ Scheduled events within the next 7 days for covered instruments (from `data/cale
 ## Signal History
 
 Compared with the previous available report (**2026-08-02**).
+
 - **New top-5:** None
 - **Persistent top signals:** ^FTSE (10 reports), ^HSI (5 reports), JPM (4 reports), MSFT (4 reports), AMZN (3 reports)
 - **Dropped from top-5:** None

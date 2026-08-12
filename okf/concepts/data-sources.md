@@ -20,7 +20,7 @@ sources:
     title: CFD instrument update workflow
 ---
 
-# Data Sources
+## Data Sources
 
 Authoritative market and instrument data sources used by AIMS and the boundaries for durable knowledge updates.
 
