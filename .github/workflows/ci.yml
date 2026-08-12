@@ -57,7 +57,7 @@ jobs:
       && github.event.workflow_run.conclusion == 'success')
     uses: dceoy/gha-for-devops/.github/workflows/markdown-lint.yml@main  # zizmor: ignore[unpinned-uses]
     with:
-      markdownlint-config-data: '{"config":{"MD013":false,"MD033":false,"MD041":false}}'
+      search-path: .
   python-lint-and-scan:
     if: >
       github.event_name == 'push'
