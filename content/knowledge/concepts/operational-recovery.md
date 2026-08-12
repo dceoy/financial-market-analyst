@@ -24,7 +24,7 @@ title: Operational Recovery
 type: knowledge
 ---
 
-# Operational Recovery
+## Operational Recovery
 
 Runbook-oriented knowledge for restoring AIMS analysis, validation, and publication workflows.
 

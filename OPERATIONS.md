@@ -472,17 +472,17 @@ The `ci.yml` workflow adds:
 
 ### Fetch failed for symbol
 
-```
+```text
 ERROR: fetch failed for ^SPX
 ```
 
 The data provider may be temporarily unavailable or the symbol may be invalid. Per-symbol fetch failures are non-fatal — a `WARNING` is logged and the fetch loop continues. The symbol is passed to the `generate` step which marks it as `missing_data` in the artifact and report when coverage policy still passes. The workflow fails before publishing when coverage gates detect a systemic data-source failure (too many missing symbols or success ratio below threshold). It also fails when no symbols at all can be fetched.
 
-**Fix:** Check `data/mappings/canonical_instrument_mappings.csv` for typos in `provider_symbol`. Verify the symbol on the provider's site (e.g. https://finance.yahoo.com or https://stooq.com). Remove permanently unavailable rows to keep the analysis clean. Re-run the workflow after the data source recovers.
+**Fix:** Check `data/mappings/canonical_instrument_mappings.csv` for typos in `provider_symbol`. Verify the symbol on the provider's site (e.g. <https://finance.yahoo.com> or <https://stooq.com>). Remove permanently unavailable rows to keep the analysis clean. Re-run the workflow after the data source recovers.
 
 ### Artifact validation failure
 
-```
+```text
 ERROR: instrument[0] missing required key: 'symbol'
 ```
 
@@ -492,7 +492,7 @@ The generated JSON does not match the expected schema. This usually means a bug 
 
 ### Hugo build failure
 
-```
+```text
 Error: ... template: ...
 ```
 
@@ -502,7 +502,7 @@ A generated Markdown file has invalid front matter or content that causes Hugo t
 
 ### Mapping validation errors
 
-```
+```text
 ERROR: row 5: unknown provider 'bloomberg'; known: csv, stooq
 WARNING: CFD instrument ('TestBroker', 'US30') has no canonical mapping entry
 ```
@@ -520,7 +520,7 @@ Reports include a freshness table. Symbols with `n/a` in the freshness column ha
 
 ### Qualitative step failed
 
-```
+```text
 WARNING: AI commentary: step failed; quantitative report unaffected
 ```
 

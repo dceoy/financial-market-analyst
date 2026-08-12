@@ -17,7 +17,7 @@ sources:
     title: AIMS README
 ---
 
-# AIMS Architecture
+## AIMS Architecture
 
 Repository-level architecture for the AIMS analysis pipeline, Hugo site, OKF source, and generated knowledge pages.
 

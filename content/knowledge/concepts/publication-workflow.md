@@ -28,7 +28,7 @@ title: Publication Workflow
 type: knowledge
 ---
 
-# Publication Workflow
+## Publication Workflow
 
 How CI/CD, pull requests, and GitHub Pages publish AIMS reports and generated OKF shadow content.
 

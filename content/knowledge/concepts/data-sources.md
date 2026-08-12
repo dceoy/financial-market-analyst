@@ -27,7 +27,7 @@ title: Data Sources
 type: knowledge
 ---
 
-# Data Sources
+## Data Sources
 
 Authoritative market and instrument data sources used by AIMS and the boundaries for durable knowledge updates.
 

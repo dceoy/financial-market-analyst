@@ -30,6 +30,7 @@ _No scheduled events for covered instruments in the next 7 days._
 ## Signal History
 
 Compared with the previous available report (**2026-08-09**).
+
 - **New top-5:** NVDA
 - **Persistent top signals:** ^GDAXI (7 reports), ^STOXX50E (6 reports), ^FCHI (5 reports), GC=F (4 reports)
 - **Dropped from top-5:** MSFT

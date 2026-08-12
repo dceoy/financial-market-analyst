@@ -23,7 +23,7 @@ sources:
     title: AIMS OKF authoring skill
 ---
 
-# Agent Skills
+## Agent Skills
 
 Repository-local Agent Skills that guide AIMS automation, OKF curation, site generation, and PR review.
 

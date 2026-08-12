@@ -14,7 +14,7 @@ Recurs on 3 distinct dates spanning 19 days:
 
 Draft concept skeleton (edit before committing):
 
-```
+```text
 ---
 id: okf/concepts/theme-copper-supply-squeeze-deepens
 title: Copper supply squeeze deepens

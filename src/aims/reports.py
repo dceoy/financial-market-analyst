@@ -344,7 +344,7 @@ def _citation_refs(citations: list[Any], numbers: dict[str, int]) -> str:
         key = str(cid)
         if key not in numbers:
             numbers[key] = len(numbers) + 1
-        refs += f"[{numbers[key]}]"
+        refs += f"\\[{numbers[key]}\\]"
     return refs
 
 

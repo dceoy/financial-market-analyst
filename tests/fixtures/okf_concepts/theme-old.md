@@ -11,6 +11,6 @@ status: deprecated
 theme_tokens: [obsolete, regime]
 ---
 
-# Obsolete Regime Theme
+## Obsolete Regime Theme
 
 Fixture only.
