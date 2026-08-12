@@ -9,9 +9,11 @@ title: AIMS Knowledge Base
 type: knowledge
 ---
 
-<!-- markdownlint-disable-next-line MD025 -->
+<!-- markdownlint-disable MD025 -->
 
 # AIMS Knowledge Base
+
+<!-- markdownlint-enable MD025 -->
 
 The `okf/` tree is the canonical repository-native source for durable AIMS architecture, operations, and methodology knowledge. Hugo pages under `content/knowledge/` are generated shadow content and must not be hand-edited.
 
