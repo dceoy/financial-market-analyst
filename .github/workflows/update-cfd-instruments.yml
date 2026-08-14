@@ -114,4 +114,4 @@ jobs:
           commit-message: "chore(data): refresh CFD instruments ${{ steps.metadata.outputs.date }}"
           title: "chore(data): refresh CFD instruments ${{ steps.metadata.outputs.date }}"
           body: ${{ steps.diff.outputs.summary }}
-          labels: agent:chatgpt,model:gpt-5.5,priority:p1
+          labels: agent:github-actions
