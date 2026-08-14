@@ -42,7 +42,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          paths: data/calendars/
+          paths: data/calendars/earnings.json
           branch: chore/refresh-calendars-${{ steps.metadata.outputs.date_compact }}
           base: main
           commit-message: "chore(data): refresh event calendars ${{ steps.metadata.outputs.date }}"
