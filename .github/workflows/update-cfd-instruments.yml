@@ -98,42 +98,20 @@ jobs:
                   f.write("\nGHEOF\n")
               print(f"Instrument changes: +{len(added)} -{len(removed)} ~{len(changed)}")
           PYEOF
+      - name: Set update metadata
+        if: steps.diff.outputs.changed == 'true'
+        id: metadata
+        run: |
+          echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+          echo "date_compact=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
       - name: Create pull request
         if: steps.diff.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_SUMMARY: ${{ steps.diff.outputs.summary }}
-        run: |
-          BRANCH="chore/refresh-cfd-instruments-$(date -u +%Y%m%d)"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          gh auth setup-git
-
-          # Fetch remote branch state so --force-with-lease works on reruns
-          git fetch origin "$BRANCH" 2>/dev/null || true
-
-          # Create or reset branch to current HEAD (idempotent on same-day reruns)
-          git checkout -B "$BRANCH"
-          git add data/cfd_instruments.csv
-          git commit -m "chore(data): refresh CFD instruments $(date -u +%Y-%m-%d)"
-          git push --force-with-lease -u origin "$BRANCH"
-
-          LABEL_ARGS=()
-          for label in "agent:chatgpt" "model:gpt-5.5" "priority:p1"; do
-            if gh label list --json name --jq '.[].name' | grep -qxF "$label"; then
-              LABEL_ARGS+=(--label "$label")
-            fi
-          done
-
-          PR_NUMBER="$(gh pr list --head "$BRANCH" --json number --jq '.[0].number // empty')"
-          if [ -n "$PR_NUMBER" ]; then
-            gh pr edit "$PR_NUMBER" --body "$PR_SUMMARY"
-            echo "PR #$PR_NUMBER already exists for $BRANCH; branch and body updated."
-          else
-            gh pr create \
-              --title "chore(data): refresh CFD instruments $(date -u +%Y-%m-%d)" \
-              --body "$PR_SUMMARY" \
-              --base main \
-              --head "$BRANCH" \
-              "${LABEL_ARGS[@]}"
-          fi
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1   # v8.1.1
+        with:
+          add-paths: data/cfd_instruments.csv
+          branch: chore/refresh-cfd-instruments-${{ steps.metadata.outputs.date_compact }}
+          base: main
+          commit-message: "chore(data): refresh CFD instruments ${{ steps.metadata.outputs.date }}"
+          title: "chore(data): refresh CFD instruments ${{ steps.metadata.outputs.date }}"
+          body: ${{ steps.diff.outputs.summary }}
+          labels: agent:chatgpt,model:gpt-5.5,priority:p1
