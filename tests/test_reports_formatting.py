@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
 
-import aims.reports as reports
+from aims import reports
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from pytest_mock import MockerFixture
 
 
@@ -38,7 +39,10 @@ def test_format_generated_markdown_uses_release_cooldown(
         assert call.kwargs["env"]["NPM_CONFIG_MIN_RELEASE_AGE"] == "7"
 
 
-@pytest.mark.parametrize(("github_actions", "expected_calls"), [("true", 1), ("false", 0)])
+@pytest.mark.parametrize(
+    ("github_actions", "expected_calls"),
+    [("true", 1), ("false", 0)],
+)
 def test_generate_and_save_formats_only_in_github_actions(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
