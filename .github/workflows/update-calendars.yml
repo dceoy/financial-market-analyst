@@ -38,11 +38,9 @@ jobs:
           echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
           echo "date_compact=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
       - name: Create pull request
-        uses: dceoy/gha-for-devops/.github/actions/create-generated-update-pr@107b083ccca9e28cb03713ef9a4aab0dfdd56539
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1   # v8.1.1
         with:
-          paths: data/calendars/earnings.json
+          add-paths: data/calendars/earnings.json
           branch: chore/refresh-calendars-${{ steps.metadata.outputs.date_compact }}
           base: main
           commit-message: "chore(data): refresh event calendars ${{ steps.metadata.outputs.date }}"
