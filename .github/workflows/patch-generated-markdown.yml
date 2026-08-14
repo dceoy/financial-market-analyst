@@ -1,0 +1,62 @@
+---
+name: Patch generated Markdown formatting
+on:
+  push:
+    branches:
+      - agent/format-generated-markdown
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: agent/format-generated-markdown
+      - name: Patch daily analysis workflow
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path('.github/workflows/daily-market-analysis.yml')
+          text = path.read_text()
+          old = '''          uv run python .agents/skills/market-analysis/scripts/generate_report.py \\
+            "${ARGS[@]}"
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+'''
+          new = '''          uv run python .agents/skills/market-analysis/scripts/generate_report.py \\
+            "${ARGS[@]}"
+      - name: Format generated Markdown
+        if: steps.symbols.outputs.symbols != ''
+        run: | # zizmor: ignore[adhoc-packages] uses pinned Markdown tools
+          files=()
+          while IFS= read -r -d '' file; do
+            files+=("$file")
+          done < <(
+            git ls-files -z --modified --others --exclude-standard -- \\
+              '*.md' '*.markdown' '*.mdx'
+          )
+          if [ "${#files[@]}" -eq 0 ]; then
+            exit 0
+          fi
+          npx -y prettier@3.9.6 --write -- "${files[@]}"
+          config="${RUNNER_TEMP}/generated-markdownlint.jsonc"
+          printf '%s\\n' '{"config":{"MD013":false,"MD033":false,"MD041":false}}' \\
+            > "$config"
+          npx -y markdownlint-cli2@0.23.2 --fix --config "$config" -- \\
+            "${files[@]}"
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+'''
+          if old not in text:
+              raise SystemExit('target block not found')
+          path.write_text(text.replace(old, new, 1))
+          Path('.github/workflows/patch-generated-markdown.yml').unlink()
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/daily-market-analysis.yml \
+            .github/workflows/patch-generated-markdown.yml
+          git commit -m "Format generated Markdown before publishing"
+          git push origin HEAD:agent/format-generated-markdown
