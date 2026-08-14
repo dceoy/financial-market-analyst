@@ -19,9 +19,11 @@ def _format_generated_markdown() -> None:
     args = parse_args()
     artifact = json.loads(args.input.read_text(encoding="utf-8"))
     output_path = args.output / report_filename(artifact)
+    npm_env = os.environ | {"NPM_CONFIG_MIN_RELEASE_AGE": "7"}
     subprocess.run(
-        ["npx", "-y", "prettier@3.9.6", "--write", "--", str(output_path)],
+        ["npx", "-y", "prettier", "--write", "--", str(output_path)],
         check=True,
+        env=npm_env,
     )
     with tempfile.NamedTemporaryFile(
         mode="w", suffix=".jsonc", encoding="utf-8", delete=False
@@ -33,7 +35,7 @@ def _format_generated_markdown() -> None:
             [
                 "npx",
                 "-y",
-                "markdownlint-cli2@0.23.2",
+                "markdownlint-cli2",
                 "--fix",
                 "--config",
                 str(config_path),
@@ -41,6 +43,7 @@ def _format_generated_markdown() -> None:
                 str(output_path),
             ],
             check=True,
+            env=npm_env,
         )
     finally:
         config_path.unlink(missing_ok=True)
