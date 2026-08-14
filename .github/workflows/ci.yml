@@ -58,15 +58,6 @@ jobs:
     uses: dceoy/gha-for-devops/.github/workflows/markdown-lint.yml@main  # zizmor: ignore[unpinned-uses]
     with:
       search-path: .
-      file-names: |
-        *.md
-        *.markdown
-        *.mdx
-        :(exclude)content/results/*.md
-      markdownlint-file-names: |
-        *.md
-        *.markdown
-        :(exclude)content/results/*.md
   python-lint-and-scan:
     if: >
       github.event_name == 'push'
