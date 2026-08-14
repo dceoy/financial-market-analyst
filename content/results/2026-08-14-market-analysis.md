@@ -30,6 +30,7 @@ _No scheduled events for covered instruments in the next 7 days._
 ## Signal History
 
 Compared with the previous available report (**2026-08-13**).
+
 - **New top-5:** ^GDAXI, ^GSPC
 - **Persistent top signals:** ^STOXX50E (10 reports), JPM (4 reports), ZC=F (2 reports)
 - **Dropped from top-5:** GC=F, SI=F
