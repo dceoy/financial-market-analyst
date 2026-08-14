@@ -1,0 +1,37 @@
+---
+name: Apply PR 207 CI fix
+on:
+  push:
+    branches:
+      - agent/format-generated-markdown
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: agent/format-generated-markdown
+          fetch-depth: 0
+      - name: Merge main and fix generated report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git merge --no-edit origin/main
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("content/results/2026-08-14-market-analysis.md")
+          text = path.read_text(encoding="utf-8")
+          old = "Compared with the previous available report (**2026-08-13**).\n- **New top-5:**"
+          new = "Compared with the previous available report (**2026-08-13**).\n\n- **New top-5:**"
+          if old in text:
+              path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
+          if ! git diff --quiet; then
+            git add content/results/2026-08-14-market-analysis.md
+            git commit -m "Fix generated Markdown formatting"
+          fi
+          git push origin HEAD:agent/format-generated-markdown
