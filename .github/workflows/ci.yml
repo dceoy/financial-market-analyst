@@ -185,7 +185,7 @@ jobs:
     permissions:
       id-token: write
       pages: write
-    uses: dceoy/gha-for-devops/.github/workflows/github-pages-deploy.yml@98c45d7227f03e4188da8273619e02c1062ca427
+    uses: dceoy/gha-for-devops/.github/workflows/github-pages-deploy.yml@main  # zizmor: ignore[unpinned-uses]
     with:
       artifact-name: github-pages
       deployment-attempts: 2
