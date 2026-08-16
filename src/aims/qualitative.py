@@ -27,7 +27,6 @@ from aims.validate_qualitative import (
 
 MODEL_ID: Final[str] = "claude-opus-4-8"
 PROMPT_VERSION: Final[str] = "1.0.0"
-CLAUDE_ACTION_REVISION: Final[str] = "e0cf66d1d257526b5d07f141838c338921cb8455"
 EXECUTION_TYPE: Final[str] = "claude-code-action-oauth"
 DEFAULT_PROMPT_PATH: Final[Path] = Path(
     ".agents/skills/qualitative-analysis/prompts/qualitative_v1.md"
@@ -37,6 +36,10 @@ MAX_ATTEMPTS: Final[int] = 2
 _DEFAULT_OUTPUT_DIR: Final[Path] = Path("data/qualitative")
 _DEFAULT_RUN_DIR: Final[Path] = Path("data/run/qualitative")
 _EVENT_WINDOW_DAYS: Final[int] = 14
+_CLAUDE_ACTION_WORKFLOW: Final[Path] = (
+    Path(__file__).resolve().parents[2] / ".github/workflows/daily-market-analysis.yml"
+)
+_CLAUDE_ACTION_USE: Final[str] = "uses: anthropics/claude-code-action@"
 
 _STANCES: Final[list[str]] = ["supportive", "neutral", "conflicting"]
 _CONFIDENCES: Final[list[str]] = ["low", "medium", "high"]
@@ -47,6 +50,22 @@ _UNITS: Final[list[str]] = ["percent", "price", "count", "other"]
 
 class QualitativeError(Exception):
     """Raised when action output cannot produce a trusted artifact."""
+
+
+def _claude_action_revision(workflow_path: Path = _CLAUDE_ACTION_WORKFLOW) -> str:
+    """Return the unique pinned Claude Code Action revision from the workflow."""
+    revisions = {
+        line.split(_CLAUDE_ACTION_USE, 1)[1].split()[0]
+        for line in workflow_path.read_text(encoding="utf-8").splitlines()
+        if _CLAUDE_ACTION_USE in line
+    }
+    if len(revisions) != 1:
+        message = f"expected one claude-code-action revision in {workflow_path}"
+        raise ValueError(message)
+    return revisions.pop()
+
+
+CLAUDE_ACTION_REVISION: Final[str] = _claude_action_revision()
 
 
 def top_signals(analysis: dict[str, Any], top_k: int) -> list[dict[str, Any]]:
