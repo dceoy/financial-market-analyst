@@ -105,15 +105,6 @@ jobs:
         run: |
           echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
           echo "date_compact=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
-      - name: Ensure GitHub Actions agent label exists
-        if: steps.diff.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh label view agent:github-actions >/dev/null 2>&1 || \
-            gh label create agent:github-actions \
-              --color ededed \
-              --description 'Pull requests created by GitHub Actions'
       - name: Create pull request
         if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1   # v8.1.1
