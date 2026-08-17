@@ -63,6 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
       pull-requests: write
     env:
       ANALYSIS_DATE: ${{ inputs.analysis_date || '' }}
@@ -565,6 +566,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           gh auth setup-git
+          gh label view agent:github-actions >/dev/null 2>&1 || \
+            gh label create agent:github-actions \
+              --color ededed \
+              --description 'Pull requests created by GitHub Actions'
           git fetch origin "$BRANCH" 2>/dev/null || true
           git checkout -B "$BRANCH"
           git add data/analysis/ data/history/ data/performance/ \
@@ -587,13 +592,15 @@ jobs:
             PR_NUMBER="$(gh pr list --head "$BRANCH" --json number --jq '.[0].number // empty')"
             if [ -n "$PR_NUMBER" ]; then
               echo "PR #$PR_NUMBER already exists for $BRANCH; branch updated."
+              gh pr edit "$PR_NUMBER" --add-label agent:github-actions
               PR_URL=$(gh pr view "$PR_NUMBER" --json url --jq '.url')
             else
               PR_URL=$(gh pr create \
                 --title "feat(analysis): daily market analysis ${DATE}" \
                 --body "Automated daily market analysis for ${DATE}." \
                 --base main \
-                --head "$BRANCH")
+                --head "$BRANCH" \
+                --label agent:github-actions)
               PR_NUMBER="$(gh pr list --head "$BRANCH" --json number --jq '.[0].number // empty')"
             fi
             echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
