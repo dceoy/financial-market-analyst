@@ -46,3 +46,4 @@ jobs:
           commit-message: "chore(data): refresh event calendars ${{ steps.metadata.outputs.date }}"
           title: "chore(data): refresh event calendars ${{ steps.metadata.outputs.date }}"
           body: Automated earnings-calendar refresh from yfinance. Macro events in data/calendars/macro_events.json are maintained by hand (see OPERATIONS.md).
+          labels: agent:github-actions
