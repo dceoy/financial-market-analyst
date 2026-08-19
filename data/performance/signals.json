@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "as_of": "2026-08-18",
+    "as_of": "2026-08-19",
     "config": {
       "horizons": [
         1,
@@ -11,8 +11,8 @@
       "top_k": 5
     },
     "disclaimer": "Informational association only. These figures measure whether the published top-5 quantitative signals outperformed a naive equal-weight basket of the same day's reliable universe in committed data; they are not an investable or executable track record, exclude fees, slippage, financing, and order timing, rest on small overlapping samples, and are not investment advice.",
-    "generated_at": "2026-08-18T00:00:00+00:00",
-    "git_commit": "6842784",
+    "generated_at": "2026-08-19T00:00:00+00:00",
+    "git_commit": "3dfe925",
     "inputs": {
       "analysis_dates": [
         "2026-06-29",
@@ -62,15 +62,16 @@
         "2026-08-13",
         "2026-08-14",
         "2026-08-17",
-        "2026-08-18"
+        "2026-08-18",
+        "2026-08-19"
       ]
     }
   },
   "signal_evaluation": {
-    "dates_evaluated": 48,
+    "dates_evaluated": 49,
     "horizons": {
       "1d": {
-        "benchmark_average_return": 0.00044,
+        "benchmark_average_return": 0.000294,
         "by_asset_class": {
           "commodity": {
             "benchmark_average_return": -0.001279,
@@ -80,18 +81,18 @@
             "top5_average_return": -0.00189
           },
           "equity": {
-            "benchmark_average_return": 0.001162,
+            "benchmark_average_return": 0.001204,
             "count": 37,
-            "excess_return": -0.002088,
-            "hit_rate": 0.540541,
+            "excess_return": -0.002131,
+            "hit_rate": 0.513514,
             "top5_average_return": -0.000926
           },
           "equity_index": {
-            "benchmark_average_return": 0.000956,
-            "count": 31,
-            "excess_return": -0.000177,
-            "hit_rate": 0.580645,
-            "top5_average_return": 0.00078
+            "benchmark_average_return": 0.000303,
+            "count": 34,
+            "excess_return": 0.000141,
+            "hit_rate": 0.588235,
+            "top5_average_return": 0.000444
           },
           "unknown": {
             "benchmark_average_return": 0.003751,
@@ -110,11 +111,11 @@
             "top5_average_return": -0.007662
           },
           "Bullish": {
-            "benchmark_average_return": -0.002607,
-            "count": 43,
-            "excess_return": 0.003773,
-            "hit_rate": 0.674419,
-            "top5_average_return": 0.001166
+            "benchmark_average_return": -0.002824,
+            "count": 46,
+            "excess_return": 0.003716,
+            "hit_rate": 0.652174,
+            "top5_average_return": 0.000892
           },
           "Neutral": {
             "benchmark_average_return": 0.000615,
@@ -131,12 +132,12 @@
             "top5_average_return": 0.002394
           }
         },
-        "count": 128,
-        "excess_return": -0.000876,
-        "hit_rate": 0.53125,
-        "incomplete": 106,
-        "pending": 6,
-        "top5_average_return": -0.000436
+        "count": 131,
+        "excess_return": -0.000789,
+        "hit_rate": 0.526718,
+        "incomplete": 109,
+        "pending": 5,
+        "top5_average_return": -0.000495
       },
       "20d": {
         "benchmark_average_return": 0.020775,
@@ -161,12 +162,12 @@
         "count": 1,
         "excess_return": 0.008899,
         "hit_rate": 1.0,
-        "incomplete": 110,
-        "pending": 129,
+        "incomplete": 117,
+        "pending": 127,
         "top5_average_return": 0.029674
       },
       "5d": {
-        "benchmark_average_return": 0.006329,
+        "benchmark_average_return": 0.005495,
         "by_asset_class": {
           "commodity": {
             "benchmark_average_return": 0.01376,
@@ -176,18 +177,18 @@
             "top5_average_return": 0.022359
           },
           "equity": {
-            "benchmark_average_return": -0.001068,
-            "count": 15,
-            "excess_return": -0.007761,
-            "hit_rate": 0.466667,
-            "top5_average_return": -0.008829
+            "benchmark_average_return": -0.002202,
+            "count": 17,
+            "excess_return": -0.007981,
+            "hit_rate": 0.470588,
+            "top5_average_return": -0.010183
           },
           "equity_index": {
-            "benchmark_average_return": -0.004868,
-            "count": 10,
-            "excess_return": 0.004535,
-            "hit_rate": 0.7,
-            "top5_average_return": -0.000333
+            "benchmark_average_return": -0.005099,
+            "count": 12,
+            "excess_return": 0.003356,
+            "hit_rate": 0.666667,
+            "top5_average_return": -0.001742
           },
           "unknown": {
             "benchmark_average_return": 0.00385,
@@ -199,11 +200,11 @@
         },
         "by_regime": {
           "Bullish": {
-            "benchmark_average_return": -0.006489,
-            "count": 22,
-            "excess_return": 0.004752,
-            "hit_rate": 0.590909,
-            "top5_average_return": -0.001737
+            "benchmark_average_return": -0.006796,
+            "count": 26,
+            "excess_return": 0.003086,
+            "hit_rate": 0.576923,
+            "top5_average_return": -0.00371
           },
           "Neutral": {
             "benchmark_average_return": 0.013699,
@@ -220,12 +221,12 @@
             "top5_average_return": 0.009282
           }
         },
-        "count": 67,
-        "excess_return": 0.003174,
-        "hit_rate": 0.58209,
-        "incomplete": 146,
+        "count": 71,
+        "excess_return": 0.002653,
+        "hit_rate": 0.577465,
+        "incomplete": 147,
         "pending": 27,
-        "top5_average_return": 0.009503
+        "top5_average_return": 0.008148
       }
     }
   },
@@ -437,18 +438,25 @@
     "2026-07-20: ZS=F: broken bar chain within 20d forward window",
     "2026-07-20: ZW=F: broken bar chain within 20d forward window",
     "2026-07-20: ^FTSE: broken bar chain within 1d forward window",
+    "2026-07-20: ^FTSE: broken bar chain within 20d forward window",
     "2026-07-20: ^FTSE: broken bar chain within 5d forward window",
     "2026-07-21: AAPL: broken bar chain within 20d forward window",
     "2026-07-21: ZC=F: broken bar chain within 20d forward window",
     "2026-07-21: ZS=F: broken bar chain within 20d forward window",
     "2026-07-21: ZW=F: broken bar chain within 20d forward window",
     "2026-07-21: ^HSI: broken bar chain within 20d forward window",
+    "2026-07-22: AAPL: broken bar chain within 20d forward window",
+    "2026-07-22: JPM: broken bar chain within 20d forward window",
+    "2026-07-22: UNH: broken bar chain within 20d forward window",
     "2026-07-22: ZS=F: broken bar chain within 20d forward window",
     "2026-07-22: ZW=F: broken bar chain within 20d forward window",
     "2026-07-23: BZ=F: broken bar chain within 5d forward window",
     "2026-07-23: JPM: broken bar chain within 5d forward window",
+    "2026-07-23: ZC=F: broken bar chain within 20d forward window",
     "2026-07-23: ZC=F: broken bar chain within 5d forward window",
+    "2026-07-23: ZS=F: broken bar chain within 20d forward window",
     "2026-07-23: ZS=F: broken bar chain within 5d forward window",
+    "2026-07-23: ZW=F: broken bar chain within 20d forward window",
     "2026-07-23: ZW=F: broken bar chain within 5d forward window",
     "2026-07-24: BZ=F: broken bar chain within 5d forward window",
     "2026-07-24: JPM: broken bar chain within 5d forward window",
@@ -586,6 +594,7 @@
     "2026-08-11: GC=F: broken bar chain within 1d forward window",
     "2026-08-11: GC=F: broken bar chain within 5d forward window",
     "2026-08-12: GC=F: broken bar chain within 1d forward window",
+    "2026-08-12: GC=F: broken bar chain within 5d forward window",
     "2026-08-13: GC=F: broken bar chain within 1d forward window",
     "2026-08-13: SI=F: broken bar chain within 1d forward window",
     "2026-08-13: ZC=F: broken bar chain within 1d forward window",
@@ -593,6 +602,9 @@
     "2026-08-17: GC=F: broken bar chain within 1d forward window",
     "2026-08-17: ZC=F: broken bar chain within 1d forward window",
     "2026-08-17: ZW=F: broken bar chain within 1d forward window",
+    "2026-08-18: GC=F: broken bar chain within 1d forward window",
+    "2026-08-18: ZC=F: broken bar chain within 1d forward window",
+    "2026-08-18: ZW=F: broken bar chain within 1d forward window",
     "AAPL: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "AMZN: conflicting ret_1d for bar 2026-07-24 across analysis artifacts; keeping the latest value",
     "BZ=F: conflicting ret_1d for bar 2026-08-07 across analysis artifacts; keeping the latest value",
