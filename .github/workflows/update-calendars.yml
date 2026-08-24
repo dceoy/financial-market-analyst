@@ -32,6 +32,11 @@ jobs:
               .agents/skills/qualitative-analysis/scripts/validate_calendar.py \
               --input "$CAL"
           done
+      - name: Ignore metadata-only update
+        run: |
+          if git diff --quiet -I '"updated_at":' -- data/calendars/earnings.json; then
+            git restore data/calendars/earnings.json
+          fi
       - name: Set update metadata
         id: metadata
         run: |
