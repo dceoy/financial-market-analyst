@@ -134,7 +134,7 @@
   "metadata": {
     "calendar_id": "earnings",
     "source": "yfinance get_earnings_dates via update_calendars.py",
-    "updated_at": "2026-08-17"
+    "updated_at": "2026-08-24"
   },
   "version": "1.0.0"
 }
